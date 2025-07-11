@@ -35,7 +35,7 @@ extern unsigned int LED_DELAYMILLIS = 100;
 
 
 void setupLeds();
-void setLedDelayMillis();
+void setLedDelayMillis(unsigned long speed);
 
 void InterruptSpeedUp();
 void InterruptSpeedDown();
