@@ -22,6 +22,7 @@ void run_program_for_duration(Program program, unsigned long duration) {
   LOGGER.info("PRGMAN.run_program_for_duration", program.Name);
   setLedDelayMillis(program.Speed);
   program.runDuration(duration);
+  _program_stats(program);
 }
 
 // Run provided program function in loop while condition function returns true.

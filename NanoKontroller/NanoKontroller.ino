@@ -39,7 +39,6 @@ void setup() {
   LOGGER.info("");
   LOGGER.info(String("*** Always Amazing Arduino NANO Led Kontroller " + VERSION + " ***"));
   LOGGER.info("");
-
 }
 
 
