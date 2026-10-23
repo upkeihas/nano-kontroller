@@ -1,39 +1,47 @@
 /**
- * This file is part of NanoKontroller.
+ * NanoKontroller, IR remote controllable 6 channel LED strip driver made for Arduino NANO/Uno.
  *
  * Made by upkeihas@github
  * See project repository for license information.
  *
- *
- * Test how to break up a project into smaller modular entities.
- *
- * DebugLogger: small serial logging utility.
- * Utils: useful multiusable helper functions.
- * LED: PWM pin manipulation and LED effect program functions.
- * Program: Fancy program manager for running LED effect program functions.
 */
 
-#define DEBUG  // Enabled debug prints to debug log
+#define DEBUG  // Enable debug prints to USB serial for logging
 #include "DebugLogger.h"  // provides LOGGER
-#include "LED.h"
-#include "Program.h"
+#include "LED.h"  // LEDs manipulation interface
+#include "Program.h"  // LED effect program manager
+#include "IRremote.hpp"  // IRremote library
+
 
 // Controller version string.
-const String VERSION = "v0.0.5";
+const String VERSION = "v0.0.6";
+const unsigned long SERIAL_BAUD = 115200;
 
-/*
- Setup to get things going.
-*/
+// IRremote settings
+#define IR_RECEIVE_PIN 13
+#define ENABLE_LED_FEEDBACK false
+
+void setupIRremote() {
+  if (!Serial) {
+    Serial.begin(SERIAL_BAUD);
+  }
+  IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
+}
+
+// LED
 
 void setup() {
   // Setup serial debug logger
-  setupLogger();
+  setupLogger(SERIAL_BAUD);
 
   // Setup led controller
   setupLeds();
 
   // Setup program manager
-  setupProgMan();
+  setupPrgMgr();
+
+  // Setup IRremote
+  setupIRremote();
 
   // Print a nice message to start debug log
   LOGGER.info("");

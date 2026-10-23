@@ -12,9 +12,6 @@
 #ifndef LED_H
 #define LED_H
 
-#include "DebugLogger.h"  // provides LOGGER
-#include "Utils.h"
-
 const int ledPins[6] = {3, 5, 6, 9, 10, 11};
 const int nLedPins = 6;
 
@@ -22,10 +19,10 @@ const int nLedPins = 6;
   Default effect maximum intensity.
   Value gets updated externally via callback function.
 */
-extern byte LED_MAXBRITE = 127;
+extern unsigned int LED_MAXBRITE = 127;
 
 // Default effect minimum intensity. This just might be useless.
-extern byte LED_MINBRITE = 0;
+extern unsigned int LED_MINBRITE = 0;
 
 /**
   Default effect speed for currently running program.

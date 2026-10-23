@@ -1,17 +1,12 @@
 // Starts serial connection session for outputting log messages.
-void setupLogger(unsigned long baud = SERIAL_BAUD) {
+void setupLogger(unsigned long baud) {
   if (!_LOGGER_ISSETUP) {
   Serial.begin(baud);
   _LOGGER_ISSETUP = true;
-  LOGGER.info(moduleNameStr(LOGGER.Name, "setupLogger"), "Debug logger initialised.");
+  LOGGER.info(String(String(LOGGER.Name) + ".setupLogger"), "Debug logger initialised.");
   }
 }
 
-// Combine module and function name for logging.
-String moduleNameStr(String module, String func) {
-  String _mod = module + "." + func;
-  return _mod;
-}
 
 /*
   DebugLogger class

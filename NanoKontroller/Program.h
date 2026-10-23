@@ -11,7 +11,6 @@
 #ifndef PROGRAM_H
 #define PROGRAM_H
 
-#include "DebugLogger.h"  // provides LOGGER
 
 /**
  * Program container class.
@@ -58,7 +57,7 @@ class Program {
 
 //TODO: Program selection interrupt handler functions
 
-void setupProgMan();
+void setupPrgMgr();
 void _program_stats(Program program);
 void run_program_for_duration(Program program, unsigned long durationMillis);
 void run_program_while(Program program, bool (*condition)());

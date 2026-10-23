@@ -1,18 +1,25 @@
 // Setup led pin states and debug logger
 void setupLeds() {
-  setupLogger();
   String _pins = "";
   for (int pin : ledPins) {
     _pins += String(pin);
     _pins += ", ";
     pinMode(pin, OUTPUT);
   }
-  LOGGER.info("LEDCTL.setupLeds", String("Led controller initialised. Configured PWM pins: " + _pins));
+  LOGGER.info("LED.setupLeds", String("Led controller initialised. Configured PWM pins: " + _pins));
 }
 
 // Set led delay millis to provided value.
 void setLedDelayMillis(unsigned long speed) {
   LED_DELAYMILLIS = speed;
+}
+
+void belay(long period) {
+  unsigned long start = millis();
+  while (true) {
+    if ((millis() - start) >= (unsigned long)period)
+      break;
+  }
 }
 
 /**
@@ -52,7 +59,7 @@ void InterruptBriteDown() {
 
 // Set brightness value for each possible pwm channel.
 void forEachLed(int brightness) {
-  LOGGER.debug("LEDCTL.forEachLed", String("brightness: " + String(brightness)));
+  LOGGER.debug("LED.forEachLed", String("brightness: " + String(brightness)));
   for (int pin : ledPins) {
     setLed(pin, brightness);
   }
