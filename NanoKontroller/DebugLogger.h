@@ -12,8 +12,7 @@
 #ifndef DEBUGLOGGER_H
 #define DEBUGLOGGER_H
 
-const unsigned long SERIAL_BAUD = 115200;
-const String LOGGER_DEFAULTNAME = "DebLog";
+const String LOGGER_DEFAULTNAME = "LOGGER";
 bool _LOGGER_ISSETUP = false;
 
 
@@ -45,8 +44,7 @@ class DebugLogger {
     void raw(String msg);
 };
 
-void setupLogger(unsigned long baud = SERIAL_BAUD);
-String moduleNameStr(String module, String func);
+void setupLogger(unsigned long baud);
 
 /**
  * Default Debug Logger.
