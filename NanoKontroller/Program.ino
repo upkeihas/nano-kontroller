@@ -1,5 +1,7 @@
 // Setup program manager.
 void setupPrgMgr() {
+  // Setup led controller
+  setupLeds();
   LOGGER.info("PrgMgr.setupPrgMgr", "Program Manager initialised.");
 }
 
@@ -30,4 +32,108 @@ void run_program_while(Program program, bool (*condition)()) {
   setLedDelayMillis(program.Speed);
   program.runWhile(condition);
   _program_stats(program);
+}
+
+// Run provided program function in a loop forever.
+void run_program_until_interrupt(Program program) {
+  LOGGER.info("PrgMgr.run_program", program.Name);
+  setLedDelayMillis(program.Speed);
+  while (!IR_COMMAND_PENDING) {
+    program.Run();
+  }
+  _program_stats(program);
+}
+
+
+
+/**
+  Effect program functions
+*/
+
+// Flash all leds on and off
+void _programFlash() {
+  forEachLed(LED_BRIGHTNESS);
+  belay(LED_DELAYMILLIS);
+  ledsOff();
+  belay(LED_DELAYMILLIS);
+}
+
+// Like that car in the eighties series, you know?
+void _programKaTT() {
+  for (int i = 0; i < nLedPins; i++) {
+    setLed(ledPins[i],
+           LED_BRIGHTNESS);
+    belay(LED_DELAYMILLIS);
+    setLed(ledPins[i],
+           LED_MIN_BRIGHTNESS);
+  }
+
+  // omit first and last led in list
+  for (int i = (nLedPins - 2); i > 0; i--) {
+    setLed(ledPins[i],
+           LED_BRIGHTNESS);
+    belay(LED_DELAYMILLIS);
+    setLed(ledPins[i],
+           LED_MIN_BRIGHTNESS);
+  }
+}
+
+// Run through leds
+void _programRunLed() {
+  for (int pin : ledPins) {
+    setLed(pin, LED_BRIGHTNESS);
+    belay(LED_DELAYMILLIS);
+    setLed(pin, LED_MIN_BRIGHTNESS);
+  }
+}
+
+// Progress through leds smoothly
+void _programProgress() {
+  for (int i = -1; i <= nLedPins; i++) {
+    // previous pin to dim
+    if (i - 1 >= 0 && i - 1 < nLedPins) {
+      setLed(ledPins[i-1], LED_BRIGHTNESS/3);
+    }
+    // current pin to max
+    if (i >= 0 && i < nLedPins) {
+      setLed(ledPins[i], LED_BRIGHTNESS);
+    }
+    // next pin to dim
+    if (i + 1 > 0 && i + 1 < nLedPins) {
+      setLed(ledPins[i+1], LED_BRIGHTNESS/3);
+    }
+
+    belay(LED_DELAYMILLIS);
+
+    // prev pin turns off
+    if (i - 1 >= 0 && i - 1 < nLedPins) {
+      setLed(ledPins[i-1], LED_MIN_BRIGHTNESS);
+    }
+  }
+}
+
+
+void _programBreathe() {
+  int fadeAmount = 5;
+  while (!IR_COMMAND_PENDING) {
+    // for each led pin in turn
+    for (int pin : ledPins) {
+      int brightness = LED_MIN_BRIGHTNESS;
+      while (!IR_COMMAND_PENDING) {
+        brightness = brightness + fadeAmount;
+        // reverse polarity!
+        if ((brightness <= LED_MIN_BRIGHTNESS) or (brightness >= LED_BRIGHTNESS)) {
+          fadeAmount = -fadeAmount;
+        }
+        // alter brightness
+        setLed(pin, brightness);
+        belay(LED_DELAYMILLIS);
+
+        // exit loop when back at zero intensity again
+        if (brightness <= 0) {
+          break;
+        }
+      }
+    }
+  }
 }
