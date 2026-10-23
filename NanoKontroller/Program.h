@@ -59,6 +59,7 @@ class Program {
 //TODO: Program selection interrupt handler functions
 
 void setupPrgMgr();
+void belay(long period);
 void _program_stats(Program program);
 void run_program_for_duration(Program program, unsigned long durationMillis);
 void run_program_until_interrupt(Program program);

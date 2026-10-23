@@ -5,6 +5,15 @@ void setupPrgMgr() {
   LOGGER.info("PrgMgr.setupPrgMgr", "Program Manager initialised.");
 }
 
+// Better Delay that responds faster to IR remote events
+void belay(long period) {
+  unsigned long start = millis();
+  while (!IrReceiver.decode()) {
+    if ((millis() - start) >= (unsigned long)period)
+      break;
+  }
+}
+
 // Print program run stats to debug log.
 void _program_stats(Program program) {
   // only if the program actually ran
@@ -38,7 +47,7 @@ void run_program_while(Program program, bool (*condition)()) {
 void run_program_until_interrupt(Program program) {
   LOGGER.info("PrgMgr.run_program", program.Name);
   setLedDelayMillis(program.Speed);
-  while (!IR_COMMAND_PENDING) {
+  while (!IrReceiver.decode()) {
     program.Run();
   }
   _program_stats(program);
@@ -115,11 +124,11 @@ void _programProgress() {
 
 void _programBreathe() {
   int fadeAmount = 5;
-  while (!IR_COMMAND_PENDING) {
+  while (!IrReceiver.decode()) {
     // for each led pin in turn
     for (int pin : ledPins) {
       int brightness = LED_MIN_BRIGHTNESS;
-      while (!IR_COMMAND_PENDING) {
+      while (!IrReceiver.decode()) {
         brightness = brightness + fadeAmount;
         // reverse polarity!
         if ((brightness <= LED_MIN_BRIGHTNESS) or (brightness >= LED_BRIGHTNESS)) {

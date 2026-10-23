@@ -7,45 +7,42 @@
 */
 
 #define DEBUG  // Enable debug prints to USB serial for logging
+#define NO_LED_FEEDBACK_CODE  // No led feedback.
 #define IR_RECEIVE_PIN 2  // IR sensor pin
+#define DECODE_NEC
 
 #include "DebugLogger.h"  // provides LOGGER
 #include "Program.h"  // LED effect programs and manager
-#include <TinyIRReceiver.hpp>  // Use interrupt-based TinyReceiver to free up all PWM channels for LED use
+// #include <TinyIRReceiver.hpp>  // Use interrupt-based TinyReceiver to free up all PWM channels for LED use
+#include <IRremote.hpp>
 
 const String VERSION = "v0.0.6";  // Current controller SW version
 const unsigned long SERIAL_BAUD = 115200;  // USB debug serial speed
-bool IR_COMMAND_PENDING = false;  // Flag to handle pending IR command event
+volatile bool IR_COMMAND_PENDING = false;  // Flag to handle pending IR command event
 uint8_t _IR_COMMAND;
 uint16_t _IR_ADDRESS;
 uint8_t _IR_FLAGS;
 unsigned int CURRENT_PROGRAM = 127;
 
 // Starts listening to IR events
-void setupIRremote() {
+void setupIRRemote() {
   if (!Serial) {
     Serial.begin(SERIAL_BAUD);
   }
-  initPCIInterruptForTinyReceiver();
+  IrReceiver.begin(IR_RECEIVE_PIN, false);
+  // if (initPCIInterruptForTinyReceiver()) {
+  //   LOGGER.debug("setupIRRemote", "TinyReceiver started.");
+  //   return;
+  // } 
+  // LOGGER.debug("Failed to start TinyReceiver!");
 }
 
-// IR interrupt event handler
+// IR interrupt event handler. Just store values and raise IR_COMMAND_PENDING flag.
 void handleReceivedIRData(uint16_t aAddress, uint8_t aCommand, uint8_t aFlags) {
   IR_COMMAND_PENDING = true;
   _IR_ADDRESS = aAddress;
   _IR_COMMAND = aCommand;
   _IR_FLAGS = aFlags;
-  // TODO: Check command here. If a simple brightness or speed adjustment,
-  // update new variable value on the fly without the need to exit current program.
-}
-
-// Better Delay that responds faster to IR remote events
-void belay(long period) {
-  unsigned long start = millis();
-  while (!IR_COMMAND_PENDING) {
-    if ((millis() - start) >= (unsigned long)period)
-      break;
-  }
 }
 
 // Global Setup
@@ -57,7 +54,7 @@ void setup() {
   setupPrgMgr();
 
   // Setup IRremote
-  setupIRremote();
+  setupIRRemote();
 
   // Print a nice message to start debug log
   LOGGER.info("");
@@ -79,9 +76,11 @@ String handleIRCommand(uint16_t command) {
   switch (command) {
     case 0:
       InterruptBriteUp();
+      LOGGER.debug(String(LED_BRIGHTNESS));
       return "BrightUp";
     case 1:
       InterruptBriteDown();
+      LOGGER.debug(String(LED_BRIGHTNESS));
       return "BrightDn";
     case 2:
       // Press OFF twice to enable intro program
@@ -135,8 +134,10 @@ String handleIRCommand(uint16_t command) {
 
 // Main Loop
 void loop() {
-  if (IR_COMMAND_PENDING) {
+  if (IrReceiver.decode()) {
+    _IR_COMMAND = IrReceiver.decodedIRData.command;
     String commandName = handleIRCommand(_IR_COMMAND);
+    IrReceiver.resume();
     LOGGER.debug(String("Handled IR command " + commandName));
   }
 
