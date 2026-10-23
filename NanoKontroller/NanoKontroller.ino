@@ -9,19 +9,17 @@
 #define DEBUG  // Enable debug prints to USB serial for logging
 #define NO_LED_FEEDBACK_CODE  // No led feedback.
 #define IR_RECEIVE_PIN 2  // IR sensor pin
-#define DECODE_NEC
+#define USE_CALLBACK_FOR_TINY_RECEIVER
 
 #include "DebugLogger.h"  // provides LOGGER
 #include "Program.h"  // LED effect programs and manager
-// #include <TinyIRReceiver.hpp>  // Use interrupt-based TinyReceiver to free up all PWM channels for LED use
-#include <IRremote.hpp>
+#include "TinyIRReceiver.hpp"  // Use interrupt-based TinyReceiver to free up all PWM channels for LED use
 
 const String VERSION = "v0.0.6";  // Current controller SW version
 const unsigned long SERIAL_BAUD = 115200;  // USB debug serial speed
 volatile bool IR_COMMAND_PENDING = false;  // Flag to handle pending IR command event
-uint8_t _IR_COMMAND;
-uint16_t _IR_ADDRESS;
-uint8_t _IR_FLAGS;
+uint8_t _IR_COMMAND;  // Captured command
+uint8_t _IR_FLAGS;  // Flags to determine command success
 unsigned int CURRENT_PROGRAM = 127;
 
 // Starts listening to IR events
@@ -29,20 +27,31 @@ void setupIRRemote() {
   if (!Serial) {
     Serial.begin(SERIAL_BAUD);
   }
-  IrReceiver.begin(IR_RECEIVE_PIN, false);
-  // if (initPCIInterruptForTinyReceiver()) {
-  //   LOGGER.debug("setupIRRemote", "TinyReceiver started.");
-  //   return;
-  // } 
-  // LOGGER.debug("Failed to start TinyReceiver!");
+  if (initPCIInterruptForTinyReceiver()) {
+    LOGGER.debug("setupIRRemote", "TinyReceiver started.");
+    return;
+  } 
+  LOGGER.debug("Failed to start TinyReceiver!");
 }
 
-// IR interrupt event handler. Just store values and raise IR_COMMAND_PENDING flag.
-void handleReceivedIRData(uint16_t aAddress, uint8_t aCommand, uint8_t aFlags) {
-  IR_COMMAND_PENDING = true;
-  _IR_ADDRESS = aAddress;
-  _IR_COMMAND = aCommand;
-  _IR_FLAGS = aFlags;
+// IR interrupt event handler. If calling a simple interrupt function cannot handle
+// our event then store values to global variables and raise IR_COMMAND_PENDING flag.
+void handleReceivedTinyIRData() {
+  _IR_COMMAND = TinyIRReceiverData.Command;
+  _IR_FLAGS = TinyIRReceiverData.Flags;
+  // TODO: add interrupt calls for program speed
+  switch (_IR_COMMAND) {
+    case 0:
+      InterruptBriteUp();
+      break;
+    case 1:
+      InterruptBriteDown();
+      break;
+    default:
+      // Can't be handled by simple interrupt, so escalate!
+      IR_COMMAND_PENDING = true;
+      break;
+  }
 }
 
 // Global Setup
@@ -74,14 +83,6 @@ String handleIRCommand(uint16_t command) {
   // We got it, reset interrupt flag
   IR_COMMAND_PENDING = false;
   switch (command) {
-    case 0:
-      InterruptBriteUp();
-      LOGGER.debug(String(LED_BRIGHTNESS));
-      return "BrightUp";
-    case 1:
-      InterruptBriteDown();
-      LOGGER.debug(String(LED_BRIGHTNESS));
-      return "BrightDn";
     case 2:
       // Press OFF twice to enable intro program
       if (CURRENT_PROGRAM == 0) {
@@ -91,8 +92,7 @@ String handleIRCommand(uint16_t command) {
       }
       return "OFF";
     case 3:
-      noProgram();
-      forEachLed(LED_BRIGHTNESS);
+      CURRENT_PROGRAM = 126;
       return "ON";
     case 4:
       noProgram();
@@ -127,6 +127,7 @@ String handleIRCommand(uint16_t command) {
       CURRENT_PROGRAM = 4;
       return "SMOOTH";
     default:
+      LOGGER.debug("handleIRCommand", "Unknown command: " + String(command));
       return "NOT FOUND";
   }
 }
@@ -134,11 +135,9 @@ String handleIRCommand(uint16_t command) {
 
 // Main Loop
 void loop() {
-  if (IrReceiver.decode()) {
-    _IR_COMMAND = IrReceiver.decodedIRData.command;
+  if (IR_COMMAND_PENDING) {
     String commandName = handleIRCommand(_IR_COMMAND);
-    IrReceiver.resume();
-    LOGGER.debug(String("Handled IR command " + commandName));
+    LOGGER.debug("handleIRCommand", "COMMAND: " + commandName);
   }
 
 
@@ -147,20 +146,28 @@ void loop() {
     run_program_until_interrupt(ProgramBreathe);
   }
 
+  // Static leds, run as program to keep responsive for brightness adjustment
+  else if (CURRENT_PROGRAM == 126) {
+    run_program_until_interrupt(ProgramStatic);
+  }
+
   // Flash
   else if (CURRENT_PROGRAM == 1) {
     run_program_until_interrupt(ProgramFlash);
+  }
 
   // Strobe
-  } else if (CURRENT_PROGRAM == 2) {
+  else if (CURRENT_PROGRAM == 2) {
     run_program_until_interrupt(ProgramKaTT);
+  }
 
   // Fade
-  } else if (CURRENT_PROGRAM == 3) {
+  else if (CURRENT_PROGRAM == 3) {
     run_program_until_interrupt(ProgramProgress);
+  }
 
   // Smooth
-  } else if (CURRENT_PROGRAM == 4) {
+  else if (CURRENT_PROGRAM == 4) {
     run_program_until_interrupt(ProgramRunLeds);
   }
 }

@@ -12,8 +12,8 @@
 #ifndef LED_H
 #define LED_H
 
-const int ledPins[4] = {5, 6, 9, 10,};
-const int nLedPins = 4;
+const int ledPins[6] = {3, 5, 6, 9, 10, 11};
+const int nLedPins = 6;
 const unsigned int ADJUST_STEP = 5;
 const unsigned int LED_MAX_INTENSITY = 255;  // 255 is Maximum. Cap if needed.
 

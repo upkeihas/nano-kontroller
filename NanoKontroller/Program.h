@@ -56,7 +56,6 @@ class Program {
     }
 };
 
-//TODO: Program selection interrupt handler functions
 
 void setupPrgMgr();
 void belay(long period);
@@ -70,6 +69,7 @@ void _programFlash();
 void _programKaTT();
 void _programProgress();
 void _programRunLed();
+void _programStatic();
 
 
 /*
@@ -80,4 +80,5 @@ Program ProgramFlash = Program("Flash Leds", &_programFlash, 480);
 Program ProgramKaTT = Program("Program KaTT", &_programKaTT, 120);
 Program ProgramProgress = Program("Progress Through Leds", &_programProgress, 240);
 Program ProgramRunLeds = Program("Run Through Leds", &_programRunLed, 60);
+Program ProgramStatic = Program("Static Leds", &_programStatic, 100);
 #endif
