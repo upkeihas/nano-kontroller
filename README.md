@@ -16,7 +16,6 @@ The very simple NEC IR protocol is probably the most common one used for LED str
 The ubiquitous Chinese IR remote that shipped with any LED strip "should just work".
 
 
-
 ```mermaid
 flowchart RL
     Arduino(<b>Arduino NANO/Uno R3</b>
@@ -53,6 +52,11 @@ flowchart RL
 ```
 
 
+### Arduino NANO PIN layout
+
+<img width="1135" height="895" alt="nano_pinout" src="https://github.com/user-attachments/assets/da52a5ca-b87c-4a35-af8c-de632d75a320" />
+
+
 ### References
 
 - https://docs.arduino.cc/tutorials/nano-r4/external-interrupts/
@@ -60,9 +64,7 @@ flowchart RL
 - https://github.com/Arduino-IRremote/Arduino-IRremote#tiny-nec-receiver-and-sender
 
 
-
 ### Author
-
 
 - [Ukko-Pekka Keihäs](https://github.com/upkeihas)
 
