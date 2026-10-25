@@ -1,5 +1,5 @@
 /**
- * NanoKontroller, IR remote controllable 6 channel LED strip driver made for Arduino NANO/Uno.
+ * NanoKontroller, IR remote controllable 6 channel LED driver made for Arduino NANO/Uno R3.
  *
  * Made by upkeihas@github
  * See project repository for license information.
@@ -7,7 +7,7 @@
 */
 
 #define DEBUG  // Enable debug prints to USB serial for logging
-#define NO_LED_FEEDBACK_CODE  // No led feedback.
+#define NO_LED_FEEDBACK_CODE  // No led feedback for IR receive
 #define IR_RECEIVE_PIN 2  // IR sensor pin
 #define USE_CALLBACK_FOR_TINY_RECEIVER
 
@@ -21,6 +21,7 @@ volatile bool IR_COMMAND_PENDING = false;  // Flag to handle pending IR command 
 uint8_t _IR_COMMAND;  // Captured command
 uint8_t _IR_FLAGS;  // Flags to determine command success
 unsigned int CURRENT_PROGRAM = 127;  // Program counter
+const unsingned int NO_PROGRAM = 0;  // Do not run a program
 
 
 // Starts listening to IR events
@@ -29,9 +30,9 @@ void setupIRRemote() {
     Serial.begin(SERIAL_BAUD);
   }
   if (initPCIInterruptForTinyReceiver()) {
-    LOGGER.debug("setupIRRemote", "TinyReceiver started.");
+    LOGGER.info("setupIRRemote", "TinyReceiver started.");
     return;
-  } 
+  }
   LOGGER.debug("Failed to start TinyReceiver!");
 }
 
@@ -74,7 +75,7 @@ void setup() {
 
 // Helper to instantly stop current program execution.
 void noProgram() {
-  CURRENT_PROGRAM = 0;
+  CURRENT_PROGRAM = NO_PROGRAM;
   ledsOff();
 }
 
@@ -86,7 +87,7 @@ String handleIRCommand(uint16_t command) {
   switch (command) {
     case 2:
       // Press OFF twice to enable intro program
-      if (CURRENT_PROGRAM == 0) {
+      if (CURRENT_PROGRAM == NO_PROGRAM) {
         CURRENT_PROGRAM = 127;
       } else {
         noProgram();
