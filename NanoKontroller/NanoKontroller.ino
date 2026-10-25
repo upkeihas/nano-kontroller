@@ -15,12 +15,13 @@
 #include "Program.h"  // LED effect programs and manager
 #include "TinyIRReceiver.hpp"  // Use interrupt-based TinyReceiver to free up all PWM channels for LED use
 
-const String VERSION = "v0.0.6";  // Current controller SW version
+const String VERSION = "v0.0.7";  // Current controller SW version
 const unsigned long SERIAL_BAUD = 115200;  // USB debug serial speed
 volatile bool IR_COMMAND_PENDING = false;  // Flag to handle pending IR command event
 uint8_t _IR_COMMAND;  // Captured command
 uint8_t _IR_FLAGS;  // Flags to determine command success
-unsigned int CURRENT_PROGRAM = 127;
+unsigned int CURRENT_PROGRAM = 127;  // Program counter
+
 
 // Starts listening to IR events
 void setupIRRemote() {
@@ -96,15 +97,18 @@ String handleIRCommand(uint16_t command) {
       return "ON";
     case 4:
       noProgram();
-      setLed(6, LED_BRIGHTNESS);
+      setLed(3, LED_BRIGHTNESS);
+      setLed(9, LED_BRIGHTNESS);
       return "R";
     case 5:
       noProgram();
-      setLed(9, LED_BRIGHTNESS);
+      setLed(5, LED_BRIGHTNESS);
+      setLed(10, LED_BRIGHTNESS);
       return "G";
     case 6:
       noProgram();
-      setLed(10, LED_BRIGHTNESS);
+      setLed(6, LED_BRIGHTNESS);
+      setLed(11, LED_BRIGHTNESS);
       return "B";
     case 7:
       noProgram();

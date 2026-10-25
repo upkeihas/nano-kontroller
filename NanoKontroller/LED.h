@@ -12,16 +12,16 @@
 #ifndef LED_H
 #define LED_H
 
-const int ledPins[6] = {3, 5, 6, 9, 10, 11};
+const int ledPins[6] = {3, 5, 6, 9, 10, 11};  // R_1, G_1, B_1, R_2, G_2, B_2
 const int nLedPins = 6;
-const unsigned int ADJUST_STEP = 5;
+const unsigned int ADJUST_STEP = 5;  // Increment step to change brightness and effect speed.
 const unsigned int LED_MAX_INTENSITY = 255;  // 255 is Maximum. Cap if needed.
 
 /**
   Default effect intensity.
   Value gets updated externally via callback function.
 */
-extern unsigned int LED_BRIGHTNESS = 127;
+extern unsigned int LED_BRIGHTNESS = 130;
 
 // Default effect minimum intensity.
 extern unsigned int LED_MIN_BRIGHTNESS = 0;

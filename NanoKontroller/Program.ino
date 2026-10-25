@@ -127,7 +127,7 @@ void _programProgress() {
   }
 }
 
-
+// Fade through all the channels one by one in a loop
 void _programBreathe() {
   int fadeAmount = 5;
   while (!IR_COMMAND_PENDING) {
