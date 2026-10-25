@@ -25,23 +25,34 @@
 
 class Program {
   public:
+    using Callback = void (*)();
+    using CallbackWargs = void (*)(unsigned int, unsigned int, unsigned int);
+
     String Name;
-    void (*program)();
     unsigned long beginMillis = 0;
     unsigned long durationMillis;
     unsigned int iters = 0;
     unsigned int Speed;
-    Program(String name, void (*prog)(), unsigned int speed) {
-      Name = name;
-      program = prog;
-      Speed = speed;
-    }
+    unsigned int R = 0;
+    unsigned int G = 0;
+    unsigned int B = 0;
+
+    Program(const String& name, Callback callback, unsigned int speed):
+    Name(name), Speed(speed), program(callback), programWargs(nullptr) {}
+
+    Program(const String& name, Callback callbackWargs, unsigned int speed, unsigned int r, unsigned int g, unsigned int b):
+    Name(name), Speed(speed), program(nullptr), programWargs(callbackWargs), R(r), G(g), B(b) {}
+
     void Run() {
       iters++;
       if (beginMillis == 0) {
         beginMillis = millis();
       }
-      program();
+      if (program != nullptr) {
+        program();
+      } else if (programWargs != nullptr) {
+        programWargs(R, G, B);
+      }
       durationMillis = (millis() - beginMillis);
     }
     void runWhile(bool (*condition)()) {
@@ -54,6 +65,9 @@ class Program {
         Run();
       } while (durationMillis < duration);
     }
+  private:
+    Callback program;
+    CallbackWargs programWargs;
 };
 
 
@@ -69,7 +83,7 @@ void _programFlash();
 void _programKaTT();
 void _programProgress();
 void _programRunLed();
-void _programStatic();
+void _programStaticColor(unsigned int r, unsigned int g, unsigned int b);
 
 
 /*
@@ -80,5 +94,5 @@ Program ProgramFlash = Program("Flash Leds", &_programFlash, 480);
 Program ProgramKaTT = Program("Program KaTT", &_programKaTT, 120);
 Program ProgramProgress = Program("Progress Through Leds", &_programProgress, 240);
 Program ProgramRunLeds = Program("Run Through Leds", &_programRunLed, 60);
-Program ProgramStatic = Program("Static Leds", &_programStatic, 100);
+Program ProgramStaticColor = Program("Static color Leds", &_programStaticColor, 120, 0, 0, 0);
 #endif

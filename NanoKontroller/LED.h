@@ -12,8 +12,14 @@
 #ifndef LED_H
 #define LED_H
 
-const int ledPins[6] = {3, 5, 6, 9, 10, 11};  // R_1, G_1, B_1, R_2, G_2, B_2
+const int R_1 = 3;
+const int G_1 = 5;
+const int B_1 = 6;
+const int R_2 = 9;
+const int G_2 = 10;
+const int B_2 = 11;
 const int nLedPins = 6;
+const int ledPins[nLedPins] = {R_1, G_1, B_1, R_2, G_2, B_2};
 const unsigned int ADJUST_STEP = 5;  // Increment step to change brightness and effect speed.
 const unsigned int LED_MAX_INTENSITY = 255;  // 255 is Maximum. Cap if needed.
 
@@ -41,8 +47,8 @@ void InterruptSpeedDown();
 void InterruptBriteUp();
 void InterruptBriteDown();
 
-void forEachLed(int brightness);
+void forEachLed(unsigned int brightness);
 void ledsOff();
-void setLed(int led, int brightness);
+void setLed(int led, unsigned int brightness);
 
 #endif

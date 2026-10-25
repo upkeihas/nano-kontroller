@@ -15,13 +15,13 @@
 #include "Program.h"  // LED effect programs and manager
 #include "TinyIRReceiver.hpp"  // Use interrupt-based TinyReceiver to free up all PWM channels for LED use
 
-const String VERSION = "v0.0.7";  // Current controller SW version
+const String VERSION = "v0.0.8";  // Current controller SW version
 const unsigned long SERIAL_BAUD = 115200;  // USB debug serial speed
 volatile bool IR_COMMAND_PENDING = false;  // Flag to handle pending IR command event
 uint8_t _IR_COMMAND;  // Captured command
 uint8_t _IR_FLAGS;  // Flags to determine command success
 unsigned int CURRENT_PROGRAM = 127;  // Program counter
-const unsingned int NO_PROGRAM = 0;  // Do not run a program
+const unsigned int NO_PROGRAM = 0;  // Do not run a program
 
 
 // Starts listening to IR events
@@ -39,8 +39,6 @@ void setupIRRemote() {
 // IR interrupt event handler. If calling a simple interrupt function cannot handle
 // our event then store values to global variables and raise IR_COMMAND_PENDING flag.
 void handleReceivedTinyIRData() {
-  _IR_COMMAND = TinyIRReceiverData.Command;
-  _IR_FLAGS = TinyIRReceiverData.Flags;
   // TODO: add interrupt calls for program speed
   switch (_IR_COMMAND) {
     case 0:
@@ -54,6 +52,8 @@ void handleReceivedTinyIRData() {
       IR_COMMAND_PENDING = true;
       break;
   }
+  _IR_COMMAND = TinyIRReceiverData.Command;
+  _IR_FLAGS = TinyIRReceiverData.Flags;
 }
 
 // Global Setup
@@ -73,7 +73,7 @@ void setup() {
   LOGGER.info("");
 }
 
-// Helper to instantly stop current program execution.
+// Helper to reset program counter and turn LEDs off.
 void noProgram() {
   CURRENT_PROGRAM = NO_PROGRAM;
   ledsOff();
@@ -95,29 +95,35 @@ String handleIRCommand(uint16_t command) {
       return "OFF";
     case 3:
       CURRENT_PROGRAM = 126;
+      ProgramStaticColor.R = ProgramStaticColor.G = ProgramStaticColor.B = LED_BRIGHTNESS;
       return "ON";
     case 4:
-      noProgram();
-      setLed(3, LED_BRIGHTNESS);
-      setLed(9, LED_BRIGHTNESS);
+      CURRENT_PROGRAM = 126;
+      ProgramStaticColor.R = LED_BRIGHTNESS;
+      ProgramStaticColor.G = LED_MIN_BRIGHTNESS;
+      ProgramStaticColor.B = LED_MIN_BRIGHTNESS;
       return "R";
     case 5:
-      noProgram();
-      setLed(5, LED_BRIGHTNESS);
-      setLed(10, LED_BRIGHTNESS);
+      CURRENT_PROGRAM = 126;
+      ProgramStaticColor.R = LED_MIN_BRIGHTNESS;
+      ProgramStaticColor.G = LED_BRIGHTNESS;
+      ProgramStaticColor.B = LED_MIN_BRIGHTNESS;
       return "G";
     case 6:
-      noProgram();
-      setLed(6, LED_BRIGHTNESS);
-      setLed(11, LED_BRIGHTNESS);
+      CURRENT_PROGRAM = 126;
+      ProgramStaticColor.R = LED_MIN_BRIGHTNESS;
+      ProgramStaticColor.G = LED_MIN_BRIGHTNESS;
+      ProgramStaticColor.B = LED_BRIGHTNESS;
       return "B";
     case 7:
-      noProgram();
-      forEachLed(LED_BRIGHTNESS);
+      CURRENT_PROGRAM = 126;
+      ProgramStaticColor.R = ProgramStaticColor.G = ProgramStaticColor.B = LED_BRIGHTNESS;
       return "W";
     case 20:
-      noProgram();
-      setLed(5, LED_BRIGHTNESS);
+      CURRENT_PROGRAM = 126;
+      ProgramStaticColor.R = LED_BRIGHTNESS;
+      ProgramStaticColor.G = LED_BRIGHTNESS;
+      ProgramStaticColor.B = LED_MIN_BRIGHTNESS;
       return "Y";
     case 11:
       CURRENT_PROGRAM = 1;
@@ -145,24 +151,18 @@ void loop() {
     LOGGER.debug("handleIRCommand", "COMMAND: " + commandName);
   }
 
-
   // Welcome program
   if (CURRENT_PROGRAM == 127) {
     run_program_until_interrupt(ProgramBreathe);
   }
 
-  // Static leds, run as program to keep responsive for brightness adjustment
-  else if (CURRENT_PROGRAM == 126) {
-    run_program_until_interrupt(ProgramStatic);
+  // Static color on
+  if (CURRENT_PROGRAM == 126) {
+    run_program_until_interrupt(ProgramStaticColor);
   }
 
-  // Flash
-  else if (CURRENT_PROGRAM == 1) {
-    run_program_until_interrupt(ProgramFlash);
-  }
-
-  // Strobe
-  else if (CURRENT_PROGRAM == 2) {
+  // Smooth
+  else if (CURRENT_PROGRAM == 4) {
     run_program_until_interrupt(ProgramKaTT);
   }
 
@@ -171,8 +171,19 @@ void loop() {
     run_program_until_interrupt(ProgramProgress);
   }
 
-  // Smooth
-  else if (CURRENT_PROGRAM == 4) {
+  // Strobe
+  else if (CURRENT_PROGRAM == 2) {
     run_program_until_interrupt(ProgramRunLeds);
   }
+
+  // Flash
+  else if (CURRENT_PROGRAM == 1) {
+    run_program_until_interrupt(ProgramFlash);
+  }
+
+  // NO_PROGRAM
+  // else if (CURRENT_PROGRAM == NO_PROGRAM) {
+  //   // Do nothing.
+  // }
+
 }

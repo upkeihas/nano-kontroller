@@ -16,6 +16,7 @@ void belay(long period) {
 
 // Print program run stats to debug log.
 void _program_stats(Program program) {
+  #ifdef DEBUG
   // only if the program actually ran
   if (program.iters > 0) {
     String _stats = "Ran ";
@@ -24,6 +25,7 @@ void _program_stats(Program program) {
     _stats += String(program.durationMillis);
     _stats += " millis.";
     LOGGER.debug("PrgMgr._program_stats", _stats);
+  #endif
   }
 }
 
@@ -45,7 +47,7 @@ void run_program_while(Program program, bool (*condition)()) {
 
 // Run provided program function in a loop forever.
 void run_program_until_interrupt(Program program) {
-  LOGGER.info("PrgMgr.run_program", program.Name);
+  LOGGER.info("PrgMgr.run_program_until_interrupt", program.Name);
   setLedDelayMillis(program.Speed);
   while (!IR_COMMAND_PENDING) {
     program.Run();
@@ -59,9 +61,14 @@ void run_program_until_interrupt(Program program) {
   Effect program functions
 */
 
-// Simply turn leds ON
-void _programStatic() {
-  forEachLed(LED_BRIGHTNESS);
+// Static color: set defined RGB color
+void _programStaticColor(unsigned int r, unsigned int g, unsigned int b) {
+  setLed(R_1, r);
+  setLed(G_1, g);
+  setLed(B_1, b);
+  setLed(R_2, r);
+  setLed(G_2, g);
+  setLed(B_2, b);
   belay(LED_DELAYMILLIS);
 }
 

@@ -54,14 +54,14 @@ void InterruptBriteDown() {
 */
 
 // Set brightness value for each possible pwm channel.
-void forEachLed(int brightness) {
+void forEachLed(unsigned int brightness) {
   for (int pin : ledPins) {
     setLed(pin, brightness);
   }
 }
 
 // Sets provided pwm pin intensity (0 .. 255).
-void setLed(int pin, int brightness) {
+void setLed(int pin, unsigned int brightness) {
   analogWrite(pin, brightness);
 }
 
