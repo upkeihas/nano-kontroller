@@ -132,24 +132,21 @@ void _programProgress() {
 // Fade through all the channels one by one in a loop
 void _programBreathe() {
   int fadeAmount = 5;
-  while (!IR_COMMAND_PENDING) {
-    // for each led pin in turn
-    for (int pin : ledPins) {
-      int brightness = LED_MIN_BRIGHTNESS;
-      while (!IR_COMMAND_PENDING) {
-        brightness = brightness + fadeAmount;
-        // reverse polarity!
-        if ((brightness <= LED_MIN_BRIGHTNESS) or (brightness >= LED_BRIGHTNESS)) {
-          fadeAmount = -fadeAmount;
-        }
-        // alter brightness
-        setLed(pin, brightness);
-        belay(LED_DELAYMILLIS);
+  for (int pin : ledPins) {
+    int brightness = LED_MIN_BRIGHTNESS;
+    while (!IR_COMMAND_PENDING) {
+      brightness = brightness + fadeAmount;
+      // reverse polarity!
+      if ((brightness <= LED_MIN_BRIGHTNESS) or (brightness >= LED_BRIGHTNESS)) {
+        fadeAmount = -fadeAmount;
+      }
+      // alter brightness
+      setLed(pin, brightness);
+      belay(LED_DELAYMILLIS);
 
-        // exit loop when back at zero intensity again
-        if (brightness <= 0) {
-          break;
-        }
+      // exit loop when back at zero intensity again
+      if (brightness <= 0) {
+        break;
       }
     }
   }

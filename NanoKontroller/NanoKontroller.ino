@@ -36,6 +36,7 @@ void setupIRRemote() {
   LOGGER.debug("Failed to start TinyReceiver!");
 }
 
+
 // IR interrupt event handler. If calling a simple interrupt function cannot handle
 // our event then store values to global variables and raise IR_COMMAND_PENDING flag.
 void handleReceivedTinyIRData() {
@@ -56,6 +57,7 @@ void handleReceivedTinyIRData() {
   _IR_FLAGS = TinyIRReceiverData.Flags;
 }
 
+
 // Global Setup
 void setup() {
   // Setup serial debug logger
@@ -73,11 +75,6 @@ void setup() {
   LOGGER.info("");
 }
 
-// Helper to reset program counter and turn LEDs off.
-void noProgram() {
-  CURRENT_PROGRAM = NO_PROGRAM;
-  ledsOff();
-}
 
 // Find out what all that ruckus is and do something about it.
 // Returns command name string after handling event.
@@ -90,7 +87,8 @@ String handleIRCommand(uint16_t command) {
       if (CURRENT_PROGRAM == NO_PROGRAM) {
         CURRENT_PROGRAM = 127;
       } else {
-        noProgram();
+        CURRENT_PROGRAM = NO_PROGRAM;
+        ledsOff();
       }
       return "OFF";
     case 3:
@@ -181,7 +179,7 @@ void loop() {
     run_program_until_interrupt(ProgramFlash);
   }
 
-  // NO_PROGRAM
+  // NO PROGRAM
   // else if (CURRENT_PROGRAM == NO_PROGRAM) {
   //   // Do nothing. Or something?
   // }
