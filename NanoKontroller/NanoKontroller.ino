@@ -183,7 +183,7 @@ void loop() {
 
   // NO_PROGRAM
   // else if (CURRENT_PROGRAM == NO_PROGRAM) {
-  //   // Do nothing.
+  //   // Do nothing. Or something?
   // }
 
 }

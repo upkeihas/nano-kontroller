@@ -37,9 +37,11 @@ class Program {
     unsigned int G = 0;
     unsigned int B = 0;
 
+    // Program with default args
     Program(const String& name, Callback callback, unsigned int speed):
-    Name(name), Speed(speed), program(callback), programWargs(nullptr) {}
+    Name(name), Speed(speed), program(callback) {}
 
+    // Program with extra RGB args
     Program(const String& name, Callback callbackWargs, unsigned int speed, unsigned int r, unsigned int g, unsigned int b):
     Name(name), Speed(speed), program(nullptr), programWargs(callbackWargs), R(r), G(g), B(b) {}
 
@@ -50,7 +52,7 @@ class Program {
       }
       if (program != nullptr) {
         program();
-      } else if (programWargs != nullptr) {
+      } else {
         programWargs(R, G, B);
       }
       durationMillis = (millis() - beginMillis);

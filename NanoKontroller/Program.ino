@@ -21,12 +21,12 @@ void _program_stats(Program program) {
   if (program.iters > 0) {
     String _stats = "Ran ";
     _stats += String(program.iters);
-    _stats += " iterations in ";
+    _stats += " iters in ";
     _stats += String(program.durationMillis);
     _stats += " millis.";
-    LOGGER.debug("PrgMgr._program_stats", _stats);
-  #endif
+    LOGGER.debug(String(program.Name), _stats);
   }
+  #endif
 }
 
 // Run provided program function in a loop for provided duration millis.
@@ -45,16 +45,11 @@ void run_program_while(Program program, bool (*condition)()) {
   _program_stats(program);
 }
 
-// Run provided program function in a loop forever.
+// Run provided program in a loop until IR interrupt.
 void run_program_until_interrupt(Program program) {
-  LOGGER.info("PrgMgr.run_program_until_interrupt", program.Name);
-  setLedDelayMillis(program.Speed);
-  while (!IR_COMMAND_PENDING) {
-    program.Run();
-  }
-  _program_stats(program);
+  run_program_while(program,
+                    [](){return (IR_COMMAND_PENDING == false);});
 }
-
 
 
 /**
