@@ -21,15 +21,15 @@ Currently this controller only supports the NEC IR protocol. The very simple NEC
 ```mermaid
 flowchart RL
     Arduino(<b>Arduino NANO/Uno R3</b>
-            PIN11
-            PIN10
-            PIN9
-            PIN6
-            PIN5
-            PIN3
-            PIN2
+            +5V
             GND
-            +5V)
+            PIN2
+            PIN3
+            PIN5
+            PIN6
+            PIN9
+            PIN10
+            PIN11)
     subgraph LED Group 1
     R_1@{ shape: delay, label: "R_1"}
     G_1@{ shape: delay, label: "G_1"}
@@ -44,13 +44,13 @@ flowchart RL
     IRreceiver(IR Remote controller receiver)
     end
 
+    IRreceiver -- "to PIN2, +5V and GND" --> Arduino
     R_1 -- "to PIN3 and GND" --> Arduino
     G_1 -- "to PIN5 and GND" --> Arduino
     B_1 -- "to PIN6 and GND" --> Arduino
     R_2 -- "to PIN9 and GND" --> Arduino
     G_2 -- "to PIN10 and GND" --> Arduino
     B_2 -- "to PIN11 and GND" --> Arduino
-    IRreceiver -- "to PIN2, +5V and GND" --> Arduino
 ```
 
 

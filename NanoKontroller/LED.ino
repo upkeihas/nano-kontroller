@@ -1,4 +1,4 @@
-// Setup led pin states and debug logger
+// Setup led pin states
 void setupLeds() {
   String _pins = "";
   for (int pin : ledPins) {
@@ -9,11 +9,16 @@ void setupLeds() {
   LOGGER.info("LED.setupLeds", String("Led controller initialised. Configured PWM pins: " + _pins));
 }
 
+// Adjust color code value to respect current LED_BRIGHTNESS value
+unsigned int adjustColorBrightness(unsigned int c) {
+  float brt_factor = static_cast<float>(LED_BRIGHTNESS)/LED_MAX_INTENSITY;
+  return static_cast<unsigned int>(c*brt_factor);
+}
+
 // Set led delay millis to provided value.
 void setLedDelayMillis(unsigned long speed) {
   LED_DELAYMILLIS = speed;
 }
-
 
 
 /**
@@ -42,26 +47,27 @@ void InterruptBriteUp() {
   }
 }
 
-// Brightness down interrupt handler.
+// Brightness down interrupt handler. Do not allow to go all the way to 0.
 void InterruptBriteDown() {
-  if (LED_BRIGHTNESS >= ADJUST_STEP) {
+  if (LED_BRIGHTNESS > LED_MIN_BRIGHTNESS) {
     LED_BRIGHTNESS -= ADJUST_STEP;
   }
 }
+
 
 /**
   Led manipulation
 */
 
 // Set brightness value for each possible pwm channel.
-void forEachLed(int brightness) {
+void forEachLed(unsigned int brightness) {
   for (int pin : ledPins) {
     setLed(pin, brightness);
   }
 }
 
 // Sets provided pwm pin intensity (0 .. 255).
-void setLed(int pin, int brightness) {
+void setLed(int pin, unsigned int brightness) {
   analogWrite(pin, brightness);
 }
 
