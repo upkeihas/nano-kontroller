@@ -14,6 +14,12 @@ void belay(long period) {
   }
 }
 
+// Adjust color code value to respect current brightness setting
+unsigned int _adjust_for_brightness(unsigned int c) {
+  float brt_factor = static_cast<float>(LED_BRIGHTNESS)/LED_MAX_INTENSITY;
+  return static_cast<unsigned int>(c*brt_factor);
+}
+
 // Print program run stats to debug log.
 void _program_stats(Program program) {
   #ifdef DEBUG
@@ -58,12 +64,15 @@ void run_program_until_interrupt(Program program) {
 
 // Static color: set defined RGB color
 void _programStaticColor(unsigned int r, unsigned int g, unsigned int b) {
-  setLed(R_1, r);
-  setLed(G_1, g);
-  setLed(B_1, b);
-  setLed(R_2, r);
-  setLed(G_2, g);
-  setLed(B_2, b);
+  unsigned int R = _adjust_for_brightness(r);
+  unsigned int G = _adjust_for_brightness(g);
+  unsigned int B = _adjust_for_brightness(b);
+  setLed(R_1, R);
+  setLed(G_1, G);
+  setLed(B_1, B);
+  setLed(R_2, R);
+  setLed(G_2, G);
+  setLed(B_2, B);
   belay(LED_DELAYMILLIS);
 }
 

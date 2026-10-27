@@ -42,8 +42,8 @@ class Program {
     Name(name), Speed(speed), program(callback) {}
 
     // Program with extra RGB args
-    Program(const String& name, Callback callbackWargs, unsigned int speed, unsigned int r, unsigned int g, unsigned int b):
-    Name(name), Speed(speed), program(nullptr), programWargs(callbackWargs), R(r), G(g), B(b) {}
+    Program(const String& name, CallbackWargs callback, unsigned int speed, unsigned int r, unsigned int g, unsigned int b):
+    Name(name), Speed(speed), program(nullptr), rgbProgram(callback), R(r), G(g), B(b) {}
 
     void Run() {
       iters++;
@@ -53,23 +53,30 @@ class Program {
       if (program != nullptr) {
         program();
       } else {
-        programWargs(R, G, B);
+        rgbProgram(R, G, B);
       }
       durationMillis = (millis() - beginMillis);
     }
-    void runWhile(bool (*condition)()) {
-      while (condition()) {
-        Run();
-      }
-    }
+
     void runDuration(unsigned long duration) {
       do {
         Run();
       } while (durationMillis < duration);
     }
+
+    void runWhile(bool (*condition)()) {
+      while (condition()) {
+        Run();
+      }
+    }
+    void setColor(unsigned int r, unsigned int g, unsigned int b) {
+      this->R=r;
+      this->G=g;
+      this->B=b;
+    }
   private:
     Callback program;
-    CallbackWargs programWargs;
+    CallbackWargs rgbProgram;
 };
 
 
@@ -96,5 +103,5 @@ Program ProgramFlash = Program("Flash Leds", &_programFlash, 480);
 Program ProgramKaTT = Program("Program KaTT", &_programKaTT, 120);
 Program ProgramProgress = Program("Progress Through Leds", &_programProgress, 240);
 Program ProgramRunLeds = Program("Run Through Leds", &_programRunLed, 60);
-Program ProgramStaticColor = Program("Static color Leds", &_programStaticColor, 120, 0, 0, 0);
+Program ProgramStaticColor = Program("Static color Leds", &_programStaticColor, 240, 0, 0, 0);
 #endif

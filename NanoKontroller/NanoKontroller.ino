@@ -93,35 +93,27 @@ String handleIRCommand(uint16_t command) {
       return "OFF";
     case 3:
       CURRENT_PROGRAM = 126;
-      ProgramStaticColor.R = ProgramStaticColor.G = ProgramStaticColor.B = LED_BRIGHTNESS;
+      ProgramStaticColor.setColor(255, 255, 255);
       return "ON";
     case 4:
       CURRENT_PROGRAM = 126;
-      ProgramStaticColor.R = LED_BRIGHTNESS;
-      ProgramStaticColor.G = LED_MIN_BRIGHTNESS;
-      ProgramStaticColor.B = LED_MIN_BRIGHTNESS;
+      ProgramStaticColor.setColor(255, 0, 0);
       return "R";
     case 5:
       CURRENT_PROGRAM = 126;
-      ProgramStaticColor.R = LED_MIN_BRIGHTNESS;
-      ProgramStaticColor.G = LED_BRIGHTNESS;
-      ProgramStaticColor.B = LED_MIN_BRIGHTNESS;
+      ProgramStaticColor.setColor(0, 255, 0);
       return "G";
     case 6:
       CURRENT_PROGRAM = 126;
-      ProgramStaticColor.R = LED_MIN_BRIGHTNESS;
-      ProgramStaticColor.G = LED_MIN_BRIGHTNESS;
-      ProgramStaticColor.B = LED_BRIGHTNESS;
+      ProgramStaticColor.setColor(0, 0, 255);
       return "B";
     case 7:
       CURRENT_PROGRAM = 126;
-      ProgramStaticColor.R = ProgramStaticColor.G = ProgramStaticColor.B = LED_BRIGHTNESS;
+      ProgramStaticColor.setColor(255, 255, 255);
       return "W";
     case 20:
       CURRENT_PROGRAM = 126;
-      ProgramStaticColor.R = LED_BRIGHTNESS;
-      ProgramStaticColor.G = LED_BRIGHTNESS;
-      ProgramStaticColor.B = LED_MIN_BRIGHTNESS;
+      ProgramStaticColor.setColor(255, 255, 0);
       return "Y";
     case 11:
       CURRENT_PROGRAM = 1;
