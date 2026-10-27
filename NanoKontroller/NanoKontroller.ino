@@ -40,6 +40,8 @@ void setupIRRemote() {
 // IR interrupt event handler. If calling a simple interrupt function cannot handle
 // our event then store values to global variables and raise IR_COMMAND_PENDING flag.
 void handleReceivedTinyIRData() {
+  _IR_COMMAND = TinyIRReceiverData.Command;
+  _IR_FLAGS = TinyIRReceiverData.Flags;
   // TODO: add interrupt calls for program speed
   switch (_IR_COMMAND) {
     case 0:
@@ -53,8 +55,6 @@ void handleReceivedTinyIRData() {
       IR_COMMAND_PENDING = true;
       break;
   }
-  _IR_COMMAND = TinyIRReceiverData.Command;
-  _IR_FLAGS = TinyIRReceiverData.Flags;
 }
 
 
@@ -108,8 +108,7 @@ String handleIRCommand(uint16_t command) {
       ProgramStaticColor.setColor(0, 0, 255);
       return "B";
     case 7:
-      CURRENT_PROGRAM = 126;
-      ProgramStaticColor.setColor(255, 255, 255);
+      CURRENT_PROGRAM = 5;
       return "W";
     case 20:
       CURRENT_PROGRAM = 126;
@@ -149,6 +148,11 @@ void loop() {
   // Static color on
   if (CURRENT_PROGRAM == 126) {
     run_program_until_interrupt(ProgramStaticColor);
+  }
+
+  // Color blaster
+  else if (CURRENT_PROGRAM == 5) {
+    run_program_until_interrupt(ProgramColorBlaster);
   }
 
   // Smooth

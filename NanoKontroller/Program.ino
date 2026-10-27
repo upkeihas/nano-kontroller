@@ -14,12 +14,6 @@ void belay(long period) {
   }
 }
 
-// Adjust color code value to respect current brightness setting
-unsigned int _adjust_for_brightness(unsigned int c) {
-  float brt_factor = static_cast<float>(LED_BRIGHTNESS)/LED_MAX_INTENSITY;
-  return static_cast<unsigned int>(c*brt_factor);
-}
-
 // Print program run stats to debug log.
 void _program_stats(Program program) {
   #ifdef DEBUG
@@ -62,11 +56,34 @@ void run_program_until_interrupt(Program program) {
   Effect program functions
 */
 
-// Static color: set defined RGB color
-void _programStaticColor(unsigned int r, unsigned int g, unsigned int b) {
-  unsigned int R = _adjust_for_brightness(r);
-  unsigned int G = _adjust_for_brightness(g);
-  unsigned int B = _adjust_for_brightness(b);
+// Fade through all the channels one by one in a loop
+void _programBreathe() {
+  int fadeAmount = static_cast<int>(ADJUST_STEP);
+  for (int pin : ledPins) {
+    int brightness = LED_OFF;
+    while (!IR_COMMAND_PENDING) {
+      brightness = brightness + fadeAmount;
+      // reverse polarity!
+      if ((brightness <= LED_OFF) or (brightness >= LED_BRIGHTNESS)) {
+        fadeAmount = -fadeAmount;
+      }
+      // alter brightness
+      setLed(pin, brightness);
+      belay(LED_DELAYMILLIS);
+
+      // exit loop when back at zero intensity again
+      if (brightness <= 0) {
+        break;
+      }
+    }
+  }
+}
+
+// Set all channels to random value, creating a vomit of color output!
+void _programColorBlaster() {
+  unsigned int R = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
+  unsigned int G = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
+  unsigned int B = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
   setLed(R_1, R);
   setLed(G_1, G);
   setLed(B_1, B);
@@ -91,7 +108,7 @@ void _programKaTT() {
            LED_BRIGHTNESS);
     belay(LED_DELAYMILLIS);
     setLed(ledPins[i],
-           LED_MIN_BRIGHTNESS);
+           LED_OFF);
   }
 
   // omit first and last led in list
@@ -100,16 +117,7 @@ void _programKaTT() {
            LED_BRIGHTNESS);
     belay(LED_DELAYMILLIS);
     setLed(ledPins[i],
-           LED_MIN_BRIGHTNESS);
-  }
-}
-
-// Run through leds
-void _programRunLed() {
-  for (int pin : ledPins) {
-    setLed(pin, LED_BRIGHTNESS);
-    belay(LED_DELAYMILLIS);
-    setLed(pin, LED_MIN_BRIGHTNESS);
+           LED_OFF);
   }
 }
 
@@ -133,30 +141,30 @@ void _programProgress() {
 
     // prev pin turns off
     if (i - 1 >= 0 && i - 1 < nLedPins) {
-      setLed(ledPins[i-1], LED_MIN_BRIGHTNESS);
+      setLed(ledPins[i-1], LED_OFF);
     }
   }
 }
 
-// Fade through all the channels one by one in a loop
-void _programBreathe() {
-  int fadeAmount = 5;
+// Run through leds
+void _programRunLed() {
   for (int pin : ledPins) {
-    int brightness = LED_MIN_BRIGHTNESS;
-    while (!IR_COMMAND_PENDING) {
-      brightness = brightness + fadeAmount;
-      // reverse polarity!
-      if ((brightness <= LED_MIN_BRIGHTNESS) or (brightness >= LED_BRIGHTNESS)) {
-        fadeAmount = -fadeAmount;
-      }
-      // alter brightness
-      setLed(pin, brightness);
-      belay(LED_DELAYMILLIS);
-
-      // exit loop when back at zero intensity again
-      if (brightness <= 0) {
-        break;
-      }
-    }
+    setLed(pin, LED_BRIGHTNESS);
+    belay(LED_DELAYMILLIS);
+    setLed(pin, LED_OFF);
   }
+}
+
+// Static color: set defined RGB color
+void _programStaticColor(unsigned int r, unsigned int g, unsigned int b) {
+  unsigned int R = adjustColorBrightness(r);
+  unsigned int G = adjustColorBrightness(g);
+  unsigned int B = adjustColorBrightness(b);
+  setLed(R_1, R);
+  setLed(G_1, G);
+  setLed(B_1, B);
+  setLed(R_2, R);
+  setLed(G_2, G);
+  setLed(B_2, B);
+  belay(LED_DELAYMILLIS);
 }

@@ -88,6 +88,7 @@ void run_program_until_interrupt(Program program);
 void run_program_while(Program program, bool (*condition)());
 
 void _programBreathe();
+void _programColorBlaster();
 void _programFlash();
 void _programKaTT();
 void _programProgress();
@@ -99,6 +100,7 @@ void _programStaticColor(unsigned int r, unsigned int g, unsigned int b);
   Led effect programs wrapped in Program container with typical example values.
 */
 Program ProgramBreathe = Program("Breathing Leds", &_programBreathe, 60);
+Program ProgramColorBlaster = Program("Color Blaster", &_programColorBlaster, 500);
 Program ProgramFlash = Program("Flash Leds", &_programFlash, 480);
 Program ProgramKaTT = Program("Program KaTT", &_programKaTT, 120);
 Program ProgramProgress = Program("Progress Through Leds", &_programProgress, 240);
