@@ -58,9 +58,9 @@ void run_program_until_interrupt(Program program) {
 
 // Fade through all the channels one by one in a loop
 void _programBreathe() {
-  int fadeAmount = static_cast<int>(ADJUST_STEP);
+  int fadeAmount = static_cast<uint8_t>(ADJUST_STEP);
   for (int pin : ledPins) {
-    int brightness = LED_OFF;
+    int brightness = static_cast<uint8_t>(LED_OFF);
     while (!IR_COMMAND_PENDING) {
       brightness = brightness + fadeAmount;
       // reverse polarity!
@@ -72,7 +72,7 @@ void _programBreathe() {
       belay(LED_DELAYMILLIS);
 
       // exit loop when back at zero intensity again
-      if (brightness <= 0) {
+      if (brightness <= LED_OFF) {
         break;
       }
     }
@@ -81,10 +81,10 @@ void _programBreathe() {
 
 // Set all channels to random value, creating a vomit of color output!
 void _programColorBlaster() {
-  unsigned int R = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
-  unsigned int G = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
-  unsigned int B = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
-  setColor(R, G, B);
+  unsigned int r = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
+  unsigned int g = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
+  unsigned int b = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
+  setColor(r, g, b);
   belay(LED_DELAYMILLIS);
 }
 
@@ -162,13 +162,14 @@ void _programStaticColor(unsigned int r, unsigned int g, unsigned int b) {
 // Wave generator program to cycle through colors smoothly
 void _programWave() {
   float iters = 0.0;
+  float step = 0.02;  // gives ~314 steps around full circle
   while (!IR_COMMAND_PENDING && (iters < TWO_PI)) {
     float amplitude = LED_BRIGHTNESS / 2; // divide by 2 because sin() returns -1 .. 1
-    iters += 0.02;
-    unsigned int R = static_cast<int>((sin(iters)+1)*amplitude);
-    unsigned int G = static_cast<int>((sin(iters+2)+1)*amplitude);
-    unsigned int B = static_cast<int>((sin(iters+4)+1)*amplitude);
-    setColor(R, G, B);
+    unsigned int r = static_cast<int>((sin(iters)+1)*amplitude);
+    unsigned int g = static_cast<int>((sin(iters+2)+1)*amplitude);
+    unsigned int b = static_cast<int>((sin(iters+4)+1)*amplitude);
+    setColor(r, g, b);
     belay(LED_DELAYMILLIS);
+    iters += step;
   }
 }

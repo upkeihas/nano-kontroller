@@ -12,7 +12,7 @@ void setupLeds() {
 // Adjust color code value to respect current LED_BRIGHTNESS value
 unsigned int adjustColorBrightness(unsigned int c) {
   float brt_factor = static_cast<float>(LED_BRIGHTNESS)/LED_MAX_INTENSITY;
-  return static_cast<unsigned int>(c*brt_factor);
+  return static_cast<uint8_t>(c*brt_factor);
 }
 
 // Set led delay millis to provided value.
@@ -86,5 +86,5 @@ void setLed(int pin, unsigned int brightness) {
 
 // Set each configured PWM channel to zero intensity.
 void ledsOff() {
-  forEachLed(0);
+  forEachLed(LED_OFF);
 }
