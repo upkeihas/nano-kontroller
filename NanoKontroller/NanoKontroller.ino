@@ -20,8 +20,8 @@ const unsigned long SERIAL_BAUD = 115200;  // USB debug serial speed
 volatile bool IR_COMMAND_PENDING = false;  // Flag to handle pending IR command event
 uint8_t _IR_COMMAND;  // Captured command
 uint8_t _IR_FLAGS;  // Flags to determine command success
-unsigned int CURRENT_PROGRAM = 127;  // Program counter
-const unsigned int NO_PROGRAM = 0;  // Do not run a program
+uint8_t CURRENT_PROGRAM = 127;  // Program counter
+const uint8_t NO_PROGRAM = 0;  // Do not run a program
 
 
 // Starts listening to IR events
@@ -108,7 +108,8 @@ String handleIRCommand(uint16_t command) {
       ProgramStaticColor.setColor(0, 0, 255);
       return "BLUE";
     case 7:
-      CURRENT_PROGRAM = 5;
+      CURRENT_PROGRAM = 126;
+      ProgramStaticColor.setColor(255, 255, 255);
       return "W";
     case 20:
       CURRENT_PROGRAM = 126;
@@ -118,9 +119,6 @@ String handleIRCommand(uint16_t command) {
       CURRENT_PROGRAM = 126;
       ProgramStaticColor.setColor(200, 0, 211);
       return "PURPLE";
-    case 21:
-      CURRENT_PROGRAM = 6;
-      return "WAVE";
     case 11:
       CURRENT_PROGRAM = 1;
       return "FLASH";
@@ -169,7 +167,7 @@ void loop() {
 
   // Smooth
   else if (CURRENT_PROGRAM == 4) {
-    run_program_until_interrupt(AltProgramWave);
+    run_program_until_interrupt(ProgramWave);
   }
 
   // Fade

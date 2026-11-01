@@ -10,7 +10,7 @@ void setupLeds() {
 }
 
 // Adjust color code value to respect current LED_BRIGHTNESS value
-unsigned int adjustColorBrightness(unsigned int c) {
+uint8_t adjustColorBrightness(uint8_t c) {
   float brt_factor = static_cast<float>(LED_BRIGHTNESS)/LED_MAX_INTENSITY;
   return static_cast<uint8_t>(c*brt_factor);
 }
@@ -60,14 +60,14 @@ void InterruptBriteDown() {
 */
 
 // Set brightness value for each possible pwm channel.
-void forEachLed(unsigned int brightness) {
+void forEachLed(uint8_t brightness) {
   for (int pin : ledPins) {
     setLed(pin, brightness);
   }
 }
 
 // Sets raw color value as pwm output.
-void setColor(unsigned int r, unsigned int g, unsigned int b) {
+void setColor(uint8_t r, uint8_t g, uint8_t b) {
   setLed(R_1, r);
   setLed(R_2, r);
   setLed(G_1, g);
@@ -80,7 +80,7 @@ void setColor(unsigned int r, unsigned int g, unsigned int b) {
 }
 
 // Sets provided pwm pin intensity (0 .. 255).
-void setLed(int pin, unsigned int brightness) {
+void setLed(int pin, uint8_t brightness) {
   analogWrite(pin, brightness);
 }
 
