@@ -84,12 +84,7 @@ void _programColorBlaster() {
   unsigned int R = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
   unsigned int G = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
   unsigned int B = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
-  setLed(R_1, R);
-  setLed(G_1, G);
-  setLed(B_1, B);
-  setLed(R_2, R);
-  setLed(G_2, G);
-  setLed(B_2, B);
+  setColor(R, G, B);
   belay(LED_DELAYMILLIS);
 }
 
@@ -160,11 +155,20 @@ void _programStaticColor(unsigned int r, unsigned int g, unsigned int b) {
   unsigned int R = adjustColorBrightness(r);
   unsigned int G = adjustColorBrightness(g);
   unsigned int B = adjustColorBrightness(b);
-  setLed(R_1, R);
-  setLed(G_1, G);
-  setLed(B_1, B);
-  setLed(R_2, R);
-  setLed(G_2, G);
-  setLed(B_2, B);
+  setColor(R, G, B);
   belay(LED_DELAYMILLIS);
+}
+
+// Wave generator program to cycle through colors smoothly
+void _programWave() {
+  float iters = 0.0;
+  while (!IR_COMMAND_PENDING && (iters < TWO_PI)) {
+    float amplitude = LED_BRIGHTNESS / 2; // divide by 2 because sin() returns -1 .. 1
+    iters += 0.02;
+    unsigned int R = static_cast<int>((sin(iters)+1)*amplitude);
+    unsigned int G = static_cast<int>((sin(iters+2)+1)*amplitude);
+    unsigned int B = static_cast<int>((sin(iters+4)+1)*amplitude);
+    setColor(R, G, B);
+    belay(LED_DELAYMILLIS);
+  }
 }

@@ -59,5 +59,6 @@ void InterruptBriteDown();
 void forEachLed(unsigned int brightness);
 void ledsOff();
 void setLed(int led, unsigned int brightness);
+void setColor(unsigned int r, unsigned int g, unsigned int b);
 
 #endif

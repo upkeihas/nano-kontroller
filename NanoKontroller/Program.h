@@ -11,6 +11,7 @@
 
 #ifndef PROGRAM_H
 #define PROGRAM_H
+#define TWO_PI 6.28318530718
 #include "LED.h"  // LEDs manipulation interface
 
 /**
@@ -20,7 +21,7 @@
  * @param name String, Program name.
  * @param prog function pointer, Actual program function reference.
  * @param speed unsigned int, Delay in millis, shorter is faster.
- * 
+ *
 **/
 
 class Program {
@@ -94,6 +95,7 @@ void _programKaTT();
 void _programProgress();
 void _programRunLed();
 void _programStaticColor(unsigned int r, unsigned int g, unsigned int b);
+void _programWave();
 
 
 /*
@@ -106,4 +108,5 @@ Program ProgramKaTT = Program("Program KaTT", &_programKaTT, 120);
 Program ProgramProgress = Program("Progress Through Leds", &_programProgress, 240);
 Program ProgramRunLeds = Program("Run Through Leds", &_programRunLed, 60);
 Program ProgramStaticColor = Program("Static color Leds", &_programStaticColor, 240, 0, 0, 0);
+Program ProgramWave = Program("Wave generator program", &_programWave, 12);
 #endif

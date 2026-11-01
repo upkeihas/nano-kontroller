@@ -66,6 +66,19 @@ void forEachLed(unsigned int brightness) {
   }
 }
 
+// Sets raw color value as pwm output.
+void setColor(unsigned int r, unsigned int g, unsigned int b) {
+  setLed(R_1, r);
+  setLed(R_2, r);
+  setLed(G_1, g);
+  setLed(G_2, g);
+  setLed(B_1, b);
+  setLed(B_2, b);
+  #ifdef DEBUG
+  LOGGER.raw(String(String(r) + "," + String(g) + "," + String(b)));
+  #endif
+}
+
 // Sets provided pwm pin intensity (0 .. 255).
 void setLed(int pin, unsigned int brightness) {
   analogWrite(pin, brightness);

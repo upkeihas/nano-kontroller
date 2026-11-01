@@ -15,7 +15,7 @@
 #include "Program.h"  // LED effect programs and manager
 #include "TinyIRReceiver.hpp"  // Use interrupt-based TinyReceiver to free up all PWM channels for LED use
 
-const String VERSION = "v0.0.8";  // Current controller SW version
+const String VERSION = "v0.0.9";  // Current controller SW version
 const unsigned long SERIAL_BAUD = 115200;  // USB debug serial speed
 volatile bool IR_COMMAND_PENDING = false;  // Flag to handle pending IR command event
 uint8_t _IR_COMMAND;  // Captured command
@@ -114,6 +114,9 @@ String handleIRCommand(uint16_t command) {
       CURRENT_PROGRAM = 126;
       ProgramStaticColor.setColor(255, 255, 0);
       return "Y";
+    case 21:
+      CURRENT_PROGRAM = 6;
+      return "WAVE";
     case 11:
       CURRENT_PROGRAM = 1;
       return "FLASH";
@@ -148,6 +151,11 @@ void loop() {
   // Static color on
   if (CURRENT_PROGRAM == 126) {
     run_program_until_interrupt(ProgramStaticColor);
+  }
+
+  // Wave generator
+  else if (CURRENT_PROGRAM == 6) {
+    run_program_until_interrupt(ProgramWave);
   }
 
   // Color blaster
