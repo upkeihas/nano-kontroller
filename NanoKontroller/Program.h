@@ -96,6 +96,7 @@ void _programProgress();
 void _programRunLed();
 void _programStaticColor(unsigned int r, unsigned int g, unsigned int b);
 void _programWave();
+void _altProgramWave();
 
 
 /*
@@ -106,7 +107,7 @@ Program ProgramColorBlaster = Program("Color Blaster", &_programColorBlaster, 50
 Program ProgramFlash = Program("Flash Leds", &_programFlash, 480);
 Program ProgramKaTT = Program("Program KaTT", &_programKaTT, 120);
 Program ProgramProgress = Program("Progress Through Leds", &_programProgress, 240);
-Program ProgramRunLeds = Program("Run Through Leds", &_programRunLed, 60);
 Program ProgramStaticColor = Program("Static color Leds", &_programStaticColor, 240, 0, 0, 0);
 Program ProgramWave = Program("Wave generator program", &_programWave, 12);
+Program AltProgramWave = Program("Alternate wave generator program", &_altProgramWave, 12);
 #endif

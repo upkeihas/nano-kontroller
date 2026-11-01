@@ -141,15 +141,6 @@ void _programProgress() {
   }
 }
 
-// Run through leds
-void _programRunLed() {
-  for (int pin : ledPins) {
-    setLed(pin, LED_BRIGHTNESS);
-    belay(LED_DELAYMILLIS);
-    setLed(pin, LED_OFF);
-  }
-}
-
 // Static color: set defined RGB color
 void _programStaticColor(unsigned int r, unsigned int g, unsigned int b) {
   unsigned int R = adjustColorBrightness(r);
@@ -164,10 +155,25 @@ void _programWave() {
   float iters = 0.0;
   float step = 0.02;  // gives ~314 steps around full circle
   while (!IR_COMMAND_PENDING && (iters < TWO_PI)) {
-    float amplitude = LED_BRIGHTNESS / 2; // divide by 2 because sin() returns -1 .. 1
-    unsigned int r = static_cast<int>((sin(iters)+1)*amplitude);
-    unsigned int g = static_cast<int>((sin(iters+2)+1)*amplitude);
-    unsigned int b = static_cast<int>((sin(iters+4)+1)*amplitude);
+    float amplitude = LED_BRIGHTNESS / 2.0; // divide by 2 because sin() returns -1 .. 1
+    uint8_t r = static_cast<uint8_t>((sin(iters)+1)*amplitude);
+    uint8_t g = static_cast<uint8_t>((sin(iters+2)+1)*amplitude);
+    uint8_t b = static_cast<uint8_t>((sin(iters+4)+1)*amplitude);
+    setColor(r, g, b);
+    belay(LED_DELAYMILLIS);
+    iters += step;
+  }
+}
+
+// Alternate wave generator program to cycle through colors smoothly
+void _altProgramWave() {
+  float iters = 0.0;
+  float step = 0.02;  // gives ~314 steps around full circle
+  while (!IR_COMMAND_PENDING && (iters < TWO_PI)) {
+    float amplitude = LED_MAX_INTENSITY / 2; // divide by 2 because sin() returns -1 .. 1
+    uint8_t r = static_cast<uint8_t>((sin(iters)+1)*amplitude);
+    uint8_t g = static_cast<uint8_t>((cos(iters)+1)*amplitude);
+    uint8_t b = static_cast<uint8_t>((sin(iters+2)+1)*amplitude);
     setColor(r, g, b);
     belay(LED_DELAYMILLIS);
     iters += step;

@@ -98,22 +98,26 @@ String handleIRCommand(uint16_t command) {
     case 4:
       CURRENT_PROGRAM = 126;
       ProgramStaticColor.setColor(255, 0, 0);
-      return "R";
+      return "RED";
     case 5:
       CURRENT_PROGRAM = 126;
       ProgramStaticColor.setColor(0, 255, 0);
-      return "G";
+      return "GREEN";
     case 6:
       CURRENT_PROGRAM = 126;
       ProgramStaticColor.setColor(0, 0, 255);
-      return "B";
+      return "BLUE";
     case 7:
       CURRENT_PROGRAM = 5;
       return "W";
     case 20:
       CURRENT_PROGRAM = 126;
       ProgramStaticColor.setColor(255, 255, 0);
-      return "Y";
+      return "YELLOW";
+    case 22:
+      CURRENT_PROGRAM = 126;
+      ProgramStaticColor.setColor(200, 0, 211);
+      return "PURPLE";
     case 21:
       CURRENT_PROGRAM = 6;
       return "WAVE";
@@ -165,7 +169,7 @@ void loop() {
 
   // Smooth
   else if (CURRENT_PROGRAM == 4) {
-    run_program_until_interrupt(ProgramKaTT);
+    run_program_until_interrupt(AltProgramWave);
   }
 
   // Fade
@@ -175,7 +179,7 @@ void loop() {
 
   // Strobe
   else if (CURRENT_PROGRAM == 2) {
-    run_program_until_interrupt(ProgramRunLeds);
+    run_program_until_interrupt(ProgramKaTT);
   }
 
   // Flash
