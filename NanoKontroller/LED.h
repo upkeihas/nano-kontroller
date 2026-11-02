@@ -35,10 +35,10 @@ volatile bool BRIGHTNESS_EVENT_PENDING = false;
   Value gets updated externally via callback function.
   Optimally divisible by ADJUST_STEP.
 */
-extern uint8_t LED_BRIGHTNESS = 130;
+volatile uint8_t LED_BRIGHTNESS = 130;
 
 // Current effect minimum intensity. Optimally divisible by ADJUST_STEP
-extern uint8_t LED_MIN_BRIGHTNESS = 5;
+const uint8_t LED_MIN_BRIGHTNESS = 5;
 
 /**
   Default effect speed for currently running program.
@@ -46,7 +46,7 @@ extern uint8_t LED_MIN_BRIGHTNESS = 5;
   and by running programs.
   Optimally divisible by ADJUST_STEP.
 */
-extern uint16_t LED_DELAYMILLIS = 100;
+volatile uint16_t LED_DELAYMILLIS = 100;
 
 void setupLeds();
 uint8_t adjustColorBrightness(uint8_t c);
