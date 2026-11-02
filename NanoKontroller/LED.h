@@ -7,7 +7,7 @@
  *
  * Led controller to manage current state of configured LED pins,
  * provide basic led manipulation calls and to handle user interrupts.
-*/
+ */
 
 #ifndef LED_H
 #define LED_H
@@ -20,7 +20,6 @@ const int G_2 = 10;
 const int B_2 = 11;
 const int nLedPins = 6;
 const int ledPins[nLedPins] = {R_1, G_1, B_1, R_2, G_2, B_2};
-
 
 // Increment step to change brightness and effect speed.
 const uint8_t ADJUST_STEP = 5;
@@ -47,12 +46,11 @@ extern uint8_t LED_MIN_BRIGHTNESS = 5;
   and by running programs.
   Optimally divisible by ADJUST_STEP.
 */
-extern uint8_t LED_DELAYMILLIS = 100;
-
+extern uint16_t LED_DELAYMILLIS = 100;
 
 void setupLeds();
 uint8_t adjustColorBrightness(uint8_t c);
-void setLedDelayMillis(unsigned long speed);
+void setLedDelayMillis(uint16_t speed);
 
 void InterruptSpeedUp();
 void InterruptSpeedDown();

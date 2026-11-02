@@ -7,14 +7,13 @@
  *
  * DebugLogger class.
  * Provides LOGGER for fast serial console debug logging.
-*/
+ */
 
 #ifndef DEBUGLOGGER_H
 #define DEBUGLOGGER_H
 
 const String LOGGER_DEFAULTNAME = "LOGGER";
 bool _LOGGER_ISSETUP = false;
-
 
 /**
  * New DebugLogger instance.
@@ -26,22 +25,25 @@ bool _LOGGER_ISSETUP = false;
  *     DebugLogger ModuleLogger = DebugLogger("MyModuleName");
  *     ModuleLogger.info("Hello from module!");
  *
- * @param name String, logger name. 
-*/
-class DebugLogger {
-  private:
-    String _millisTs();
-    void _printLogLn(String module, String level, String msg);
-  public:
-    String Name;
-    DebugLogger(String name = LOGGER_DEFAULTNAME) {
-      Name = name;
-    };
-    void debug(String module, String msg);
-    void debug(String msg);
-    void info(String module, String msg);
-    void info(String msg);
-    void raw(String msg);
+ * @param name String, logger name.
+ */
+class DebugLogger
+{
+private:
+  String _millisTs();
+  void _printLogLn(String module, String level, String msg);
+
+public:
+  String Name;
+  DebugLogger(String name = LOGGER_DEFAULTNAME)
+  {
+    Name = name;
+  };
+  void debug(String module, String msg);
+  void debug(String msg);
+  void info(String module, String msg);
+  void info(String msg);
+  void raw(String msg);
 };
 
 void setupLogger(unsigned long baud);
@@ -62,7 +64,7 @@ void setupLogger(unsigned long baud);
  *    `1132 | DEBG | DebLog | This is a debug message.`
  *    `1136 | DEBG | MYMODULE.Name | This is a debug message?`
  *
-*/
+ */
 DebugLogger LOGGER = DebugLogger();
 
 #endif
