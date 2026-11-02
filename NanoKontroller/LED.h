@@ -7,7 +7,7 @@
  *
  * Led controller to manage current state of configured LED pins,
  * provide basic led manipulation calls and to handle user interrupts.
-*/
+ */
 
 #ifndef LED_H
 #define LED_H
@@ -21,22 +21,24 @@ const int B_2 = 11;
 const int nLedPins = 6;
 const int ledPins[nLedPins] = {R_1, G_1, B_1, R_2, G_2, B_2};
 
-
 // Increment step to change brightness and effect speed.
-const unsigned int ADJUST_STEP = 5;
+const uint8_t ADJUST_STEP = 5;
 // Maximum brightness for leds.
-const unsigned int LED_MAX_INTENSITY = 255;
-const unsigned int LED_OFF = 0;
+const uint8_t LED_MAX_INTENSITY = 255;
+const uint8_t LED_OFF = 0;
+
+// Signal our program that brightness setting just changed
+volatile bool BRIGHTNESS_EVENT_PENDING = false;
 
 /**
   Current effect intensity.
   Value gets updated externally via callback function.
   Optimally divisible by ADJUST_STEP.
 */
-extern unsigned int LED_BRIGHTNESS = 130;
+volatile uint8_t LED_BRIGHTNESS = 130;
 
 // Current effect minimum intensity. Optimally divisible by ADJUST_STEP
-extern unsigned int LED_MIN_BRIGHTNESS = 5;
+const uint8_t LED_MIN_BRIGHTNESS = 5;
 
 /**
   Default effect speed for currently running program.
@@ -44,20 +46,20 @@ extern unsigned int LED_MIN_BRIGHTNESS = 5;
   and by running programs.
   Optimally divisible by ADJUST_STEP.
 */
-extern unsigned int LED_DELAYMILLIS = 100;
-
+volatile uint16_t LED_DELAYMILLIS = 100;
 
 void setupLeds();
-unsigned int adjustColorBrightness(unsigned int c);
-void setLedDelayMillis(unsigned long speed);
+uint8_t adjustColorBrightness(uint8_t c);
+void setLedDelayMillis(uint16_t speed);
 
 void InterruptSpeedUp();
 void InterruptSpeedDown();
 void InterruptBriteUp();
 void InterruptBriteDown();
 
-void forEachLed(unsigned int brightness);
+void forEachLed(uint8_t brightness);
 void ledsOff();
-void setLed(int led, unsigned int brightness);
+void setLed(int led, uint8_t brightness);
+void setColor(uint8_t r, uint8_t g, uint8_t b);
 
 #endif
