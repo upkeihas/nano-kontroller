@@ -6,7 +6,7 @@
  *
  */
 
-#define DEBUG                // Enable debug prints to USB serial for logging
+//#define DEBUG                // Enable debug prints to USB serial for logging
 #define NO_LED_FEEDBACK_CODE // No led feedback for IR receive
 #define IR_RECEIVE_PIN 2     // IR sensor pin
 #define USE_CALLBACK_FOR_TINY_RECEIVER
@@ -115,13 +115,16 @@ String handleIRCommand(uint16_t command)
     ProgramStaticColor.setColor(0, 0, 255);
     return "BLUE";
   case 7:
-    CURRENT_PROGRAM = 126;
-    ProgramStaticColor.setColor(255, 255, 255);
+    CURRENT_PROGRAM = 5;
     return "W";
   case 20:
     CURRENT_PROGRAM = 126;
     ProgramStaticColor.setColor(255, 255, 0);
     return "YELLOW";
+  case 21:
+    CURRENT_PROGRAM = 126;
+    ProgramStaticColor.setColor(0, 51, 51);
+    return "TIBER";
   case 22:
     CURRENT_PROGRAM = 126;
     ProgramStaticColor.setColor(200, 0, 211);
