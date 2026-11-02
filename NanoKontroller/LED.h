@@ -28,6 +28,9 @@ const uint8_t ADJUST_STEP = 5;
 const uint8_t LED_MAX_INTENSITY = 255;
 const uint8_t LED_OFF = 0;
 
+// Signal our program that brightness setting just changed
+volatile bool BRIGHTNESS_EVENT_PENDING = false;
+
 /**
   Current effect intensity.
   Value gets updated externally via callback function.

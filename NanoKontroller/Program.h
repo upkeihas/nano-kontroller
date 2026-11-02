@@ -48,6 +48,7 @@ class Program {
     Name(name), Speed(speed), program(nullptr), rgbProgram(callback), R(r), G(g), B(b) {}
 
     void Run() {
+      BRIGHTNESS_EVENT_PENDING = false;
       iters++;
       if (beginMillis == 0) {
         beginMillis = millis();
@@ -81,8 +82,8 @@ class Program {
     CallbackWargs rgbProgram;
 };
 
-
 void setupPrgMgr();
+void bblock();
 void belay(long period);
 void _program_stats(Program program);
 void run_program_for_duration(Program program, unsigned long durationMillis);
@@ -97,7 +98,6 @@ void _programProgress();
 void _programRunLed();
 void _programStaticColor(uint8_t r, uint8_t g, uint8_t b);
 void _programWave();
-void _altProgramWave();
 
 
 /*

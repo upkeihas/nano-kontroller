@@ -44,6 +44,7 @@ void InterruptSpeedDown() {
 void InterruptBriteUp() {
   if ((LED_BRIGHTNESS + ADJUST_STEP) <= LED_MAX_INTENSITY) {
     LED_BRIGHTNESS += ADJUST_STEP;
+    BRIGHTNESS_EVENT_PENDING = true;
   }
 }
 
@@ -51,6 +52,7 @@ void InterruptBriteUp() {
 void InterruptBriteDown() {
   if (LED_BRIGHTNESS > LED_MIN_BRIGHTNESS) {
     LED_BRIGHTNESS -= ADJUST_STEP;
+    BRIGHTNESS_EVENT_PENDING = true;
   }
 }
 

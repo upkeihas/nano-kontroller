@@ -5,7 +5,14 @@ void setupPrgMgr() {
   LOGGER.info("PrgMgr.setupPrgMgr", "Program Manager initialised.");
 }
 
-// Better Delay that responds faster to IR remote events
+// Better block that responds to IR remote events.
+void bblock() {
+  while (!IR_COMMAND_PENDING && !BRIGHTNESS_EVENT_PENDING) {
+    belay(LED_DELAYMILLIS);
+  }
+}
+
+// Better delay that responds to IR remote events.
 void belay(long period) {
   unsigned long start = millis();
   while (!IR_COMMAND_PENDING) {
@@ -80,10 +87,9 @@ void _programBreathe() {
 
 // Set all channels to random value, creating a vomit of color output!
 void _programColorBlaster() {
-  uint8_t r = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
-  uint8_t g = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
-  uint8_t b = random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS);
-  setColor(r, g, b);
+  setColor(static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
+           static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
+           static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)));
   belay(LED_DELAYMILLIS);
 }
 
@@ -147,7 +153,7 @@ void _programStaticColor(uint8_t r, uint8_t g, uint8_t b) {
   setColor(adjustColorBrightness(r),
            adjustColorBrightness(g),
            adjustColorBrightness(b));
-  belay(LED_DELAYMILLIS);
+  bblock();
 }
 
 // Wave generator program to cycle through colors smoothly
