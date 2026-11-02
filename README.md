@@ -1,6 +1,10 @@
 # nano-kontroller
 
 
+[![Badge Version](https://img.shields.io/github/v/release/upkeihas/nano-kontroller?style=for-the-badge&color=33660e&labelColor=428813&logoColor=white&logo=DocuSign)](https://github.com/upkeihas/nano-kontroller/releases/latest)
+[![License](https://img.shields.io/github/license/upkeihas/nano-kontroller?style=for-the-badge)](./LICENSE)
+
+
 ### Simple 6 channel RGB LED controller for Arduino NANO / Uno R3
 
 - Uses Arduino NANO or Uno R3 to drive RBG LEDs connected to PWM pins `3`, `5`, `6`, `9`, `10` and `11`.
