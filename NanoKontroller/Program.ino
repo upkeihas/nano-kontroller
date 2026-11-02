@@ -58,17 +58,16 @@ void run_program_until_interrupt(Program program) {
 
 // Fade through all the channels one by one in a loop
 void _programBreathe() {
-  int fadeAmount = static_cast<int>(ADJUST_STEP);
+  int fadeAmount = ADJUST_STEP;
   for (int pin : ledPins) {
-    int brightness = static_cast<int>(LED_OFF);
+    int brightness = LED_OFF;
     while (!IR_COMMAND_PENDING) {
       brightness = brightness + fadeAmount;
       // reverse polarity!
-      if ((brightness <= LED_OFF) or (brightness >= LED_BRIGHTNESS)) {
+      if ((brightness <= LED_OFF) || (brightness >= LED_BRIGHTNESS)) {
         fadeAmount = -fadeAmount;
       }
-      // alter brightness
-      setLed(pin, brightness);
+      setLed(pin, static_cast<uint8_t>(brightness));
       belay(LED_DELAYMILLIS);
 
       // exit loop when back at zero intensity again
@@ -121,7 +120,8 @@ void _programProgress() {
   for (int i = -1; i <= nLedPins; i++) {
     // previous pin to dim
     if (i - 1 >= 0 && i - 1 < nLedPins) {
-      setLed(ledPins[i-1], LED_BRIGHTNESS/3);
+      setLed(ledPins[i-1],
+             static_cast<uint8_t>(LED_BRIGHTNESS/3));
     }
     // current pin to max
     if (i >= 0 && i < nLedPins) {
@@ -129,7 +129,8 @@ void _programProgress() {
     }
     // next pin to dim
     if (i + 1 > 0 && i + 1 < nLedPins) {
-      setLed(ledPins[i+1], LED_BRIGHTNESS/3);
+      setLed(ledPins[i+1],
+             static_cast<uint8_t>(LED_BRIGHTNESS/3));
     }
 
     belay(LED_DELAYMILLIS);
@@ -143,10 +144,9 @@ void _programProgress() {
 
 // Static color: set defined RGB color
 void _programStaticColor(uint8_t r, uint8_t g, uint8_t b) {
-  uint8_t R = adjustColorBrightness(r);
-  uint8_t G = adjustColorBrightness(g);
-  uint8_t B = adjustColorBrightness(b);
-  setColor(R, G, B);
+  setColor(adjustColorBrightness(r),
+           adjustColorBrightness(g),
+           adjustColorBrightness(b));
   belay(LED_DELAYMILLIS);
 }
 
@@ -160,7 +160,7 @@ void _programWave() {
   uint8_t b;
   while (!IR_COMMAND_PENDING && (rad < TWO_PI)) {
     amplitude = LED_BRIGHTNESS / 2.0; // divide by 2 because sin() returns -1 .. 1
-    // TODO: less calls to sin(), consider using a time series of static sine wave intensity values instead
+    // TODO: less calls to sin(), consider using static time series of sine wave intensity values instead
     r = static_cast<uint8_t>((sin(rad)+1)*amplitude);
     g = static_cast<uint8_t>((sin(rad+2)+1)*amplitude);
     b = static_cast<uint8_t>((sin(rad+4)+1)*amplitude);
