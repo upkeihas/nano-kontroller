@@ -26,6 +26,55 @@ void belay(long period)
   }
 }
 
+// Helper function to capture color button press before actual IR interrupt handler runs.
+// Returns captured RGB color.
+RGB _captureColorPress(RGB &oldColor)
+{
+  if (IR_COMMAND_PENDING)
+  {
+    if (String(",4,5,6,7,8,9,10,12,13,14,16,17,18,20,21,22").indexOf(String("," + _IR_COMMAND)) >= 0)
+    {
+      IR_COMMAND_PENDING = false;
+      switch (_IR_COMMAND)
+      {
+      case 4:
+        return RED;
+      case 5:
+        return GREEN;
+      case 6:
+        return BLUE;
+      case 7:
+        return WHITE;
+      case 8:
+        return VERMILLION;
+      case 9:
+        return MINT;
+      case 10:
+        return DBLUE;
+      case 12:
+        return ORANGE;
+      case 13:
+        return TEAL;
+      case 14:
+        return VIOLET;
+      case 16:
+        return CARROT;
+      case 17:
+        return MBLUE;
+      case 18:
+        return INDIGO;
+      case 20:
+        return YELLOW;
+      case 21:
+        return TIBER;
+      case 22:
+        return PURPLE;
+      }
+    }
+  }
+  return oldColor;
+}
+
 // Print program run stats to debug log.
 void _program_stats(Program program)
 {
@@ -103,19 +152,27 @@ void _programBreathe()
 // Set all channels to random value, creating a vomit of color output!
 void _programColorBlaster()
 {
-  setColor(static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
+  setColor({static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
            static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
-           static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)));
+           static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS))});
   belay(LED_DELAYMILLIS);
 }
 
-// Flash all leds on and off
+// Flash color on and off
 void _programFlash()
 {
-  forEachLed(LED_BRIGHTNESS);
-  belay(LED_DELAYMILLIS);
-  ledsOff();
-  belay(LED_DELAYMILLIS);
+  RGB color = {LED_BRIGHTNESS, LED_BRIGHTNESS, LED_BRIGHTNESS};
+
+  while (!IR_COMMAND_PENDING)
+  {
+    setColor({color.r, color.g, color.b});
+    belay(LED_DELAYMILLIS);
+    ledsOff();
+    belay(LED_DELAYMILLIS);
+
+    // Toggles effect color if user presses color buttons on remote
+    color = _captureColorPress(color);
+  }
 }
 
 // Like that car in the eighties series, you know?
@@ -177,9 +234,9 @@ void _programProgress()
 // Static color: set defined RGB color
 void _programStaticColor(uint8_t r, uint8_t g, uint8_t b)
 {
-  setColor(adjustColorBrightness(r),
+  setColor({adjustColorBrightness(r),
            adjustColorBrightness(g),
-           adjustColorBrightness(b));
+           adjustColorBrightness(b)});
   bblock();
 }
 
@@ -199,7 +256,7 @@ void _programWave()
     r = static_cast<uint8_t>((sin(rad) + 1) * amplitude);
     g = static_cast<uint8_t>((sin(rad + 2) + 1) * amplitude);
     b = static_cast<uint8_t>((sin(rad + 4) + 1) * amplitude);
-    setColor(r, g, b);
+    setColor({r, g, b});
     belay(LED_DELAYMILLIS);
     rad += step;
   }
