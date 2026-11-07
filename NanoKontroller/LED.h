@@ -22,7 +22,8 @@ const int nLedPins = 6;
 const int ledPins[nLedPins] = {R_1, G_1, B_1, R_2, G_2, B_2};
 
 // Container for RGB color codes
-struct RGB {
+struct RGB
+{
   uint8_t r;
   uint8_t g;
   uint8_t b;
@@ -55,7 +56,6 @@ const uint8_t LED_MIN_BRIGHTNESS = 5;
 */
 volatile uint16_t LED_DELAYMILLIS = 100;
 
-
 void setupLeds();
 uint8_t adjustColorBrightness(uint8_t c);
 void setLedDelayMillis(uint16_t speed);
@@ -69,7 +69,6 @@ void forEachLed(uint8_t brightness);
 void ledsOff();
 void setLed(int led, uint8_t brightness);
 void setColor(RGB color);
-
 
 const RGB RED = {255, 0, 0};
 const RGB GREEN = {0, 255, 0};
@@ -87,6 +86,5 @@ const RGB INDIGO = {75, 0, 130};
 const RGB YELLOW = {235, 235, 0};
 const RGB TIBER = {0, 51, 51};
 const RGB PURPLE = {255, 0, 255};
-
 
 #endif

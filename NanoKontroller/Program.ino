@@ -26,51 +26,56 @@ void belay(long period)
   }
 }
 
-// Helper function to capture color button press before actual IR interrupt handler runs.
-// Returns captured RGB color.
+/**
+  Helper function to capture color button press during program execution,
+  before actual IR interrupt handler runs.
+  Returns captured RGB color or provided color.
+*/
 RGB _captureColorPress(RGB &oldColor)
 {
-  if (IR_COMMAND_PENDING)
+  if (IR_COMMAND_PENDING && _IR_COMMAND >= 4 && _IR_COMMAND <= 22)
   {
-    if (String(",4,5,6,7,8,9,10,12,13,14,16,17,18,20,21,22").indexOf(String("," + _IR_COMMAND)) >= 0)
-    {
-      IR_COMMAND_PENDING = false;
-      switch (_IR_COMMAND)
+    const uint8_t colorCommands[] = {4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 16, 17, 18, 20, 21, 22};
+    for (uint8_t command : colorCommands)
+      if (command == _IR_COMMAND)
       {
-      case 4:
-        return RED;
-      case 5:
-        return GREEN;
-      case 6:
-        return BLUE;
-      case 7:
-        return WHITE;
-      case 8:
-        return VERMILLION;
-      case 9:
-        return MINT;
-      case 10:
-        return DBLUE;
-      case 12:
-        return ORANGE;
-      case 13:
-        return TEAL;
-      case 14:
-        return VIOLET;
-      case 16:
-        return CARROT;
-      case 17:
-        return MBLUE;
-      case 18:
-        return INDIGO;
-      case 20:
-        return YELLOW;
-      case 21:
-        return TIBER;
-      case 22:
-        return PURPLE;
+        IR_COMMAND_PENDING = false;
+        switch (_IR_COMMAND)
+        {
+        case 4:
+          return RED;
+        case 5:
+          return GREEN;
+        case 6:
+          return BLUE;
+        case 7:
+          return WHITE;
+        case 8:
+          return VERMILLION;
+        case 9:
+          return MINT;
+        case 10:
+          return DBLUE;
+        case 12:
+          return ORANGE;
+        case 13:
+          return TEAL;
+        case 14:
+          return VIOLET;
+        case 16:
+          return CARROT;
+        case 17:
+          return MBLUE;
+        case 18:
+          return INDIGO;
+        case 20:
+          return YELLOW;
+        case 21:
+          return TIBER;
+        case 22:
+          return PURPLE;
+        }
       }
-    }
   }
   return oldColor;
 }
@@ -153,19 +158,20 @@ void _programBreathe()
 void _programColorBlaster()
 {
   setColor({static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
-           static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
-           static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS))});
+            static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
+            static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS))});
   belay(LED_DELAYMILLIS);
 }
 
 // Flash color on and off
 void _programFlash()
 {
+  // Respect existing brightness setting
   RGB color = {LED_BRIGHTNESS, LED_BRIGHTNESS, LED_BRIGHTNESS};
 
   while (!IR_COMMAND_PENDING)
   {
-    setColor({color.r, color.g, color.b});
+    setColor(color);
     belay(LED_DELAYMILLIS);
     ledsOff();
     belay(LED_DELAYMILLIS);
@@ -232,11 +238,11 @@ void _programProgress()
 }
 
 // Static color: set defined RGB color
-void _programStaticColor(uint8_t r, uint8_t g, uint8_t b)
+void _programStaticColor(RGB color)
 {
-  setColor({adjustColorBrightness(r),
-           adjustColorBrightness(g),
-           adjustColorBrightness(b)});
+  setColor({adjustColorBrightness(color.r),
+            adjustColorBrightness(color.g),
+            adjustColorBrightness(color.b)});
   bblock();
 }
 
@@ -246,17 +252,15 @@ void _programWave()
   float rad = 0.0;             // starting point of color wheel
   float step = TWO_PI / 360.0; // one degree steps
   float amplitude;
-  uint8_t r;
-  uint8_t g;
-  uint8_t b;
+  RGB color;
   while (!IR_COMMAND_PENDING && (rad < TWO_PI))
   {
     amplitude = LED_BRIGHTNESS / 2.0; // divide by 2 because sin() returns -1 .. 1
     // TODO: less calls to sin(), consider using static time series of sine wave intensity values instead
-    r = static_cast<uint8_t>((sin(rad) + 1) * amplitude);
-    g = static_cast<uint8_t>((sin(rad + 2) + 1) * amplitude);
-    b = static_cast<uint8_t>((sin(rad + 4) + 1) * amplitude);
-    setColor({r, g, b});
+    color.r = static_cast<uint8_t>((sin(rad) + 1) * amplitude);
+    color.g = static_cast<uint8_t>((sin(rad + 2.09) + 1) * amplitude);
+    color.b = static_cast<uint8_t>((sin(rad + 4.19) + 1) * amplitude);
+    setColor(color);
     belay(LED_DELAYMILLIS);
     rad += step;
   }

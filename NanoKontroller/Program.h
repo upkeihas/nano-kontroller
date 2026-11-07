@@ -17,10 +17,11 @@
 /**
  * Program container class.
  *
- * Keeps track of program execution timestamps and stuff. Much important.
+ * Keeps track of program execution state and such. Much important.
  * @param name String, Program name.
- * @param prog function pointer, Actual program function reference.
- * @param speed uint8_t, Delay in millis, shorter is faster.
+ * @param callback Function pointer, Actual program function reference.
+ * @param speed uint16_t, Effect delay in millis, shorter is faster.
+ * @param color optional, RGB, Effect color setting.
  *
  **/
 
@@ -28,22 +29,20 @@ class Program
 {
 public:
   using Callback = void (*)();
-  using CallbackWargs = void (*)(uint8_t, uint8_t, uint8_t);
+  using CallbackWargs = void (*)(RGB);
 
   String Name;
   unsigned long beginMillis = 0;
   unsigned long durationMillis;
   uint16_t iters = 0;
   uint16_t Speed;
-  uint8_t R = 0;
-  uint8_t G = 0;
-  uint8_t B = 0;
+  RGB Color;
 
   // Program with default args
   Program(const String &name, Callback callback, uint16_t speed) : Name(name), Speed(speed), program(callback) {}
 
   // Program with extra RGB args
-  Program(const String &name, CallbackWargs callback, uint16_t speed, uint8_t r, uint8_t g, uint8_t b) : Name(name), Speed(speed), program(nullptr), rgbProgram(callback), R(r), G(g), B(b) {}
+  Program(const String &name, CallbackWargs callback, uint16_t speed, RGB color) : Name(name), Speed(speed), program(nullptr), rgbProgram(callback), Color(color) {}
 
   void Run()
   {
@@ -59,7 +58,7 @@ public:
     }
     else
     {
-      rgbProgram(R, G, B);
+      rgbProgram(Color);
     }
     durationMillis = (millis() - beginMillis);
   }
@@ -81,9 +80,7 @@ public:
   }
   void setColor(RGB color)
   {
-    this->R = color.r;
-    this->G = color.g;
-    this->B = color.b;
+    this->Color = color;
   }
 
 private:
@@ -106,7 +103,7 @@ void _programFlash();
 void _programKaTT();
 void _programProgress();
 void _programRunLed();
-void _programStaticColor(uint8_t r, uint8_t g, uint8_t b);
+void _programStaticColor(RGB color);
 void _programWave();
 
 /*
@@ -117,6 +114,6 @@ Program ProgramColorBlaster = Program("Color Blaster", &_programColorBlaster, 50
 Program ProgramFlash = Program("Flash Leds", &_programFlash, 480);
 Program ProgramKaTT = Program("Program KaTT", &_programKaTT, 120);
 Program ProgramProgress = Program("Progress Through Leds", &_programProgress, 240);
-Program ProgramStaticColor = Program("Static color Leds", &_programStaticColor, 240, 0, 0, 0);
+Program ProgramStaticColor = Program("Static color Leds", &_programStaticColor, 240, WHITE); // Static program uses LED_DELAYMILLIS to probe for brightness change
 Program ProgramWave = Program("Wave generator program", &_programWave, 12);
 #endif
