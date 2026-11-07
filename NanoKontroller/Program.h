@@ -79,11 +79,11 @@ public:
       Run();
     }
   }
-  void setColor(uint8_t r, uint8_t g, uint8_t b)
+  void setColor(RGB color)
   {
-    this->R = r;
-    this->G = g;
-    this->B = b;
+    this->R = color.r;
+    this->G = color.g;
+    this->B = color.b;
   }
 
 private:
@@ -94,6 +94,7 @@ private:
 void setupPrgMgr();
 void bblock();
 void belay(long period);
+RGB _captureColorPress(RGB &oldColor);
 void _program_stats(Program program);
 void run_program_for_duration(Program program, unsigned long durationMillis);
 void run_program_until_interrupt(Program program);

@@ -6,7 +6,7 @@
  *
  */
 
-//#define DEBUG                // Enable debug prints to USB serial for logging
+#define DEBUG                // Enable debug prints to USB serial for logging
 #define NO_LED_FEEDBACK_CODE // No led feedback for IR receive
 #define IR_RECEIVE_PIN 2     // IR sensor pin
 #define USE_CALLBACK_FOR_TINY_RECEIVER
@@ -15,7 +15,7 @@
 #include "Program.h"          // LED effect programs and manager
 #include "TinyIRReceiver.hpp" // Use interrupt-based TinyReceiver to free up all PWM channels for LED use
 
-const String VERSION = "v0.0.9";          // Current controller SW version
+const String VERSION = "v0.1.0";          // Current controller SW version
 const unsigned long SERIAL_BAUD = 115200; // USB debug serial speed
 volatile bool IR_COMMAND_PENDING = false; // Flag to handle pending IR command event
 uint8_t _IR_COMMAND;                      // Captured command
@@ -35,7 +35,6 @@ void setupIRRemote()
     LOGGER.info("setupIRRemote", "TinyReceiver started.");
     return;
   }
-  LOGGER.debug("Failed to start TinyReceiver!");
 }
 
 // IR interrupt event handler. If calling a simple interrupt function cannot handle
@@ -74,7 +73,7 @@ void setup()
 
   // Print a nice message to start debug log
   LOGGER.info("");
-  LOGGER.info(String("*** Always Amazing Arduino NANO Led Kontroller " + VERSION + " ***"));
+  LOGGER.info(String("*** Always Amazing Arduino NANO-Kontroller " + VERSION + " ***"));
   LOGGER.info("");
 }
 
@@ -100,34 +99,70 @@ String handleIRCommand(uint16_t command)
     return "OFF";
   case 3:
     CURRENT_PROGRAM = 126;
-    ProgramStaticColor.setColor(255, 255, 255);
+    ProgramStaticColor.setColor(WHITE);
     return "ON";
   case 4:
     CURRENT_PROGRAM = 126;
-    ProgramStaticColor.setColor(255, 0, 0);
+    ProgramStaticColor.setColor(RED);
     return "RED";
   case 5:
     CURRENT_PROGRAM = 126;
-    ProgramStaticColor.setColor(0, 255, 0);
+    ProgramStaticColor.setColor(GREEN);
     return "GREEN";
   case 6:
     CURRENT_PROGRAM = 126;
-    ProgramStaticColor.setColor(0, 0, 255);
+    ProgramStaticColor.setColor(BLUE);
     return "BLUE";
   case 7:
     CURRENT_PROGRAM = 5;
     return "W";
+  case 8:
+    CURRENT_PROGRAM = 126;
+    ProgramStaticColor.setColor(VERMILLION);
+    return "VERMILLION";
+  case 9:
+    CURRENT_PROGRAM = 126;
+    ProgramStaticColor.setColor(MINT);
+    return "MINT";
+  case 10:
+    CURRENT_PROGRAM = 126;
+    ProgramStaticColor.setColor(DBLUE);
+    return "DBLUE";
+  case 12:
+    CURRENT_PROGRAM = 126;
+    ProgramStaticColor.setColor(ORANGE);
+    return "ORANGE";
+  case 13:
+    CURRENT_PROGRAM = 126;
+    ProgramStaticColor.setColor(TEAL);
+    return "TEAL";
+  case 14:
+    CURRENT_PROGRAM = 126;
+    ProgramStaticColor.setColor(VIOLET);
+    return "VIOLET";
+  case 16:
+    CURRENT_PROGRAM = 126;
+    ProgramStaticColor.setColor(CARROT);
+    return "CARROT";
+  case 17:
+    CURRENT_PROGRAM = 126;
+    ProgramStaticColor.setColor(MBLUE);
+    return "MBLUE";
+  case 18:
+    CURRENT_PROGRAM = 126;
+    ProgramStaticColor.setColor(INDIGO);
+    return "INDIGO";
   case 20:
     CURRENT_PROGRAM = 126;
-    ProgramStaticColor.setColor(255, 255, 0);
+    ProgramStaticColor.setColor(YELLOW);
     return "YELLOW";
   case 21:
     CURRENT_PROGRAM = 126;
-    ProgramStaticColor.setColor(0, 51, 51);
+    ProgramStaticColor.setColor(TIBER);
     return "TIBER";
   case 22:
     CURRENT_PROGRAM = 126;
-    ProgramStaticColor.setColor(200, 0, 211);
+    ProgramStaticColor.setColor(PURPLE);
     return "PURPLE";
   case 11:
     CURRENT_PROGRAM = 1;
@@ -153,7 +188,7 @@ void loop()
   if (IR_COMMAND_PENDING)
   {
     String commandName = handleIRCommand(_IR_COMMAND);
-    LOGGER.debug("handleIRCommand", "COMMAND: " + commandName);
+    LOGGER.debug("handleIRCommand", String("COMMAND: " + commandName));
   }
 
   // Welcome program
@@ -166,12 +201,6 @@ void loop()
   if (CURRENT_PROGRAM == 126)
   {
     run_program_until_interrupt(ProgramStaticColor);
-  }
-
-  // Wave generator
-  else if (CURRENT_PROGRAM == 6)
-  {
-    run_program_until_interrupt(ProgramWave);
   }
 
   // Color blaster
