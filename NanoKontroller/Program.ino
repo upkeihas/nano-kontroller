@@ -30,47 +30,49 @@ void belay(long period)
 // Returns captured RGB color.
 RGB _captureColorPress(RGB &oldColor)
 {
-  if (IR_COMMAND_PENDING)
+  if (IR_COMMAND_PENDING && _IR_COMMAND >= 4 && _IR_COMMAND <= 22)
   {
-    if (String(",4,5,6,7,8,9,10,12,13,14,16,17,18,20,21,22").indexOf(String("," + _IR_COMMAND)) >= 0)
-    {
-      IR_COMMAND_PENDING = false;
-      switch (_IR_COMMAND)
+    const uint8_t colorCommands[] = {4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 16, 17, 18, 20, 21, 22};
+    for (uint8_t command : colorCommands)
+      if (command == _IR_COMMAND)
       {
-      case 4:
-        return RED;
-      case 5:
-        return GREEN;
-      case 6:
-        return BLUE;
-      case 7:
-        return WHITE;
-      case 8:
-        return VERMILLION;
-      case 9:
-        return MINT;
-      case 10:
-        return DBLUE;
-      case 12:
-        return ORANGE;
-      case 13:
-        return TEAL;
-      case 14:
-        return VIOLET;
-      case 16:
-        return CARROT;
-      case 17:
-        return MBLUE;
-      case 18:
-        return INDIGO;
-      case 20:
-        return YELLOW;
-      case 21:
-        return TIBER;
-      case 22:
-        return PURPLE;
+        IR_COMMAND_PENDING = false;
+        switch (_IR_COMMAND)
+        {
+        case 4:
+          return RED;
+        case 5:
+          return GREEN;
+        case 6:
+          return BLUE;
+        case 7:
+          return WHITE;
+        case 8:
+          return VERMILLION;
+        case 9:
+          return MINT;
+        case 10:
+          return DBLUE;
+        case 12:
+          return ORANGE;
+        case 13:
+          return TEAL;
+        case 14:
+          return VIOLET;
+        case 16:
+          return CARROT;
+        case 17:
+          return MBLUE;
+        case 18:
+          return INDIGO;
+        case 20:
+          return YELLOW;
+        case 21:
+          return TIBER;
+        case 22:
+          return PURPLE;
+        }
       }
-    }
   }
   return oldColor;
 }
@@ -153,8 +155,8 @@ void _programBreathe()
 void _programColorBlaster()
 {
   setColor({static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
-           static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
-           static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS))});
+            static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
+            static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS))});
   belay(LED_DELAYMILLIS);
 }
 
@@ -235,8 +237,8 @@ void _programProgress()
 void _programStaticColor(uint8_t r, uint8_t g, uint8_t b)
 {
   setColor({adjustColorBrightness(r),
-           adjustColorBrightness(g),
-           adjustColorBrightness(b)});
+            adjustColorBrightness(g),
+            adjustColorBrightness(b)});
   bblock();
 }
 
