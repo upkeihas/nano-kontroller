@@ -99,6 +99,7 @@ void run_program_while(Program program, bool (*condition)());
 
 void _programBreathe();
 void _programColorBlaster();
+void _programColorFade();
 void _programFlash();
 void _programKaTT();
 void _programProgress();
@@ -111,9 +112,10 @@ void _programWave();
 */
 Program ProgramBreathe = Program("Breathing Leds", &_programBreathe, 60);
 Program ProgramColorBlaster = Program("Color Blaster", &_programColorBlaster, 500);
+Program ProgramColorFade = Program("Linear Color Fader", &_programColorFade, 24);
 Program ProgramFlash = Program("Flash Leds", &_programFlash, 480);
 Program ProgramKaTT = Program("Program KaTT", &_programKaTT, 120);
 Program ProgramProgress = Program("Progress Through Leds", &_programProgress, 240);
-Program ProgramStaticColor = Program("Static color Leds", &_programStaticColor, 240, WHITE); // Static program uses LED_DELAYMILLIS to probe for brightness change
-Program ProgramWave = Program("Wave generator program", &_programWave, 12);
+Program ProgramStaticColor = Program("Static Color Leds", &_programStaticColor, 240, WHITE);
+Program ProgramWave = Program("Wave Generator Color Fader", &_programWave, 12);
 #endif

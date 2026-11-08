@@ -124,7 +124,10 @@ void run_program_until_interrupt(Program program)
 }
 
 /**
-  Effect program functions
+  Effect program functions.
+  Program functions can either be one-offs that are automatically run in a loop,
+  or they can safely block regular program execution flow by monitoring the state of
+  global boolean IR_COMMAND_PENDING, signaling an IR command has been received and needs handling.
 */
 
 // Fade through all the channels one by one in a loop
@@ -240,28 +243,63 @@ void _programProgress()
 // Static color: set defined RGB color
 void _programStaticColor(RGB color)
 {
-  setColor({adjustColorBrightness(color.r),
-            adjustColorBrightness(color.g),
-            adjustColorBrightness(color.b)});
+  setBrightnessAdjustedColor(color);
   bblock();
 }
 
 // Wave generator program to cycle through colors smoothly
 void _programWave()
 {
-  float rad = 0.0;             // starting point of color wheel
-  float step = TWO_PI / 360.0; // one degree steps
+  float rad = 0.0;              // starting point of color wheel
+  float step = TWO_PI / 360.0f; // one degree steps
   float amplitude;
   RGB color;
   while (!IR_COMMAND_PENDING && (rad < TWO_PI))
   {
-    amplitude = LED_BRIGHTNESS / 2.0; // divide by 2 because sin() returns -1 .. 1
+    amplitude = LED_BRIGHTNESS / 2.0f; // divide by 2 because sin() returns -1 .. 1
     // TODO: less calls to sin(), consider using static time series of sine wave intensity values instead
     color.r = static_cast<uint8_t>((sin(rad) + 1) * amplitude);
-    color.g = static_cast<uint8_t>((sin(rad + 2.09) + 1) * amplitude);
-    color.b = static_cast<uint8_t>((sin(rad + 4.19) + 1) * amplitude);
+    color.g = static_cast<uint8_t>((sin(rad + 2.09f) + 1) * amplitude);
+    color.b = static_cast<uint8_t>((sin(rad + 4.19f) + 1) * amplitude);
     setColor(color);
     belay(LED_DELAYMILLIS);
     rad += step;
+  }
+}
+
+// Fade through 2 color channels at a time
+void _programColorFade()
+{
+  RGB color = {LED_OFF, LED_OFF, 255};
+  while (!IR_COMMAND_PENDING)
+  {
+    // run once per color channel
+    for (uint8_t i = 0; i < 3; i++)
+    {
+      // 255 brightness steps per channel
+      for (uint8_t j = 0; j < 255; j++)
+      {
+        // Red
+        if (i == 0)
+        {
+          color.r += 1;
+          color.b -= 1;
+        }
+        // Green
+        else if (i == 1)
+        {
+          color.r -= 1;
+          color.g += 1;
+        }
+        // Blue
+        else if (i == 2)
+        {
+          color.b += 1;
+          color.g -= 1;
+        }
+        setBrightnessAdjustedColor(color);
+        belay(LED_DELAYMILLIS);
+      }
+    }
   }
 }

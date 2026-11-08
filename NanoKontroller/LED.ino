@@ -76,7 +76,16 @@ void forEachLed(uint8_t brightness)
   }
 }
 
-// Sets raw color value for both led groups as pwm output.
+// Sets brightness adjusted color value for both led groups.
+void setBrightnessAdjustedColor(RGB color)
+{
+  color.r = adjustColorBrightness(color.r);
+  color.g = adjustColorBrightness(color.g);
+  color.b = adjustColorBrightness(color.b);
+  setColor(color);
+}
+
+// Sets raw color value for both led groups.
 void setColor(RGB color)
 {
   setLed(R_1, color.r);

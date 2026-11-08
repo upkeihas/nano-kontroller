@@ -218,7 +218,8 @@ void loop()
   // Fade
   else if (CURRENT_PROGRAM == 3)
   {
-    run_program_until_interrupt(ProgramProgress);
+    // run_program_until_interrupt(ProgramProgress);
+    run_program_until_interrupt(ProgramColorFade);
   }
 
   // Strobe
