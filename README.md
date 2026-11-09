@@ -70,7 +70,6 @@ If you uncomment the line `#DEFINE DEBUG` in project file `NanoKontroller.ino`, 
 True color programs dump the RGB value of set color to logger in CSV format, so you can have nice visualizations of your channel intensities:
 
 
-
 https://github.com/user-attachments/assets/37130891-8f24-468a-b172-f1df79637f43
 
 

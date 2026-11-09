@@ -135,14 +135,14 @@ void run_program_until_interrupt(Program program)
 void _programBreathe()
 {
   int fadeAmount = 1;
+  int brightness = LED_OFF;
   for (int pin : ledPins)
   {
-    int brightness = LED_OFF;
     while (!IR_COMMAND_PENDING)
     {
-      brightness = brightness + fadeAmount;
+      brightness += fadeAmount;
       // reverse polarity!
-      if ((brightness <= LED_OFF) || (brightness >= LED_BRIGHTNESS))
+      if ((brightness <= LED_OFF) || ((brightness >= LED_BRIGHTNESS) && (fadeAmount > 0)))
       {
         fadeAmount = -fadeAmount;
       }
@@ -174,11 +174,10 @@ void _programColorBlaster()
 // Flash color on and off
 void _programFlash()
 {
-  // Respect existing brightness setting
-  RGB color = {LED_BRIGHTNESS, LED_BRIGHTNESS, LED_BRIGHTNESS};
+  RGB color = WHITE;
   while (!IR_COMMAND_PENDING)
   {
-    setColor(color);
+    setBrightnessAdjustedColor(color);
     belay(LED_DELAYMILLIS);
     ledsOff();
     belay(LED_DELAYMILLIS);
