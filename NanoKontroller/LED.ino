@@ -40,11 +40,7 @@ void InterruptSpeedUp()
 // Speed down interrupt handler.
 void InterruptSpeedDown()
 {
-  // Cap max delay millis to ~30k
-  if (LED_DELAYMILLIS < 30000)
-  {
-    LED_DELAYMILLIS += ADJUST_STEP;
-  }
+  LED_DELAYMILLIS += ADJUST_STEP;
 }
 
 // Brightness up interrupt handler.
@@ -80,17 +76,26 @@ void forEachLed(uint8_t brightness)
   }
 }
 
-// Sets raw color value as pwm output.
-void setColor(uint8_t r, uint8_t g, uint8_t b)
+// Sets brightness adjusted color value for both led groups.
+void setBrightnessAdjustedColor(RGB color)
 {
-  setLed(R_1, r);
-  setLed(R_2, r);
-  setLed(G_1, g);
-  setLed(G_2, g);
-  setLed(B_1, b);
-  setLed(B_2, b);
+  color.r = adjustColorBrightness(color.r);
+  color.g = adjustColorBrightness(color.g);
+  color.b = adjustColorBrightness(color.b);
+  setColor(color);
+}
+
+// Sets raw color value for both led groups.
+void setColor(RGB &color)
+{
+  setLed(R_1, color.r);
+  setLed(R_2, color.r);
+  setLed(G_1, color.g);
+  setLed(G_2, color.g);
+  setLed(B_1, color.b);
+  setLed(B_2, color.b);
 #ifdef DEBUG
-  LOGGER.raw(String(String(r) + "," + String(g) + "," + String(b)));
+  LOGGER.raw(String(String(color.r) + "," + String(color.g) + "," + String(color.b)));
 #endif
 }
 
