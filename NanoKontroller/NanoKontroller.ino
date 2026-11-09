@@ -6,7 +6,7 @@
  *
  */
 
-#define DEBUG                // Enable debug prints to USB serial for logging
+// #define DEBUG                // Enable debug prints to USB serial for logging
 #define NO_LED_FEEDBACK_CODE // No led feedback for IR receive
 #define IR_RECEIVE_PIN 2     // IR sensor pin
 #define USE_CALLBACK_FOR_TINY_RECEIVER
