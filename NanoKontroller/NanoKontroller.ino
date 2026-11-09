@@ -15,7 +15,7 @@
 #include "Program.h"          // LED effect programs and manager
 #include "TinyIRReceiver.hpp" // Use interrupt-based TinyReceiver to free up all PWM channels for LED use
 
-const String VERSION = "v0.1.0";          // Current controller SW version
+const String VERSION = "v0.1.1";          // Current controller SW version
 const unsigned long SERIAL_BAUD = 115200; // USB debug serial speed
 volatile bool IR_COMMAND_PENDING = false; // Flag to handle pending IR command event
 uint8_t _IR_COMMAND;                      // Captured command
