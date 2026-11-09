@@ -270,14 +270,14 @@ void _programWave()
 // Fade through 2 color channels at a time
 void _programColorFade()
 {
-  RGB color = {LED_OFF, LED_OFF, 255};
+  RGB color = {LED_OFF, LED_OFF, LED_MAX_INTENSITY};
   while (!IR_COMMAND_PENDING)
   {
     // run once per color channel
     for (uint8_t i = 0; i < 3; i++)
     {
-      // 255 brightness steps per channel
-      for (uint8_t j = 0; j < 255; j++)
+      // For each brightness step
+      for (uint8_t j = 0; j < LED_MAX_INTENSITY; j++)
       {
         // Red
         if (i == 0)
