@@ -67,7 +67,7 @@ flowchart RL
 
 If you uncomment the line `#DEFINE DEBUG` in project file `NanoKontroller.ino`, you will receive lots of useful debug messages in the Arduino USB serial log. Expected speed setting for serial debugger connection is `115200` bps.
 
-True color programs dump the RGB value of set color to logger in CVS format, so you can have nice visualizations of your channel intensities:
+True color programs dump the RGB value of set color to logger in CSV format, so you can have nice visualizations of your channel intensities:
 
 
 
@@ -76,7 +76,7 @@ https://github.com/user-attachments/assets/37130891-8f24-468a-b172-f1df79637f43
 
 ### References
 
-- https://docs.arduino.cc/tutorials/nano-r4/external-interrupts/
+- https://deepbluembedded.com/arduino-interrupts-tutorial-examples/
 - https://github.com/Arduino-IRremote/Arduino-IRremote
 - https://github.com/Arduino-IRremote/Arduino-IRremote#tiny-nec-receiver-and-sender
 
