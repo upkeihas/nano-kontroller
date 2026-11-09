@@ -79,13 +79,13 @@ const RGB VERMILLION = {227, 66, 52};
 const RGB MINT = {173, 235, 179};
 const RGB DBLUE = {6, 6, 235};
 const RGB ORANGE = {255, 165, 0};
-const RGB TEAL = {0, 128, 128};
-const RGB VIOLET = {130, 12, 130};
+const RGB TEAL = {0, 255, 255};
+const RGB VIOLET = {255, 26, 255};
 const RGB CARROT = {237, 145, 33};
 const RGB MBLUE = {25, 24, 208};
-const RGB INDIGO = {75, 0, 130};
-const RGB YELLOW = {235, 235, 0};
-const RGB TIBER = {0, 51, 51};
+const RGB INDIGO = {150, 0, 255};
+const RGB YELLOW = {255, 255, 0};
+const RGB TIBER = {20, 235, 235};
 const RGB PURPLE = {255, 0, 255};
 
 #endif
