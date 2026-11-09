@@ -86,7 +86,7 @@ void setBrightnessAdjustedColor(RGB color)
 }
 
 // Sets raw color value for both led groups.
-void setColor(RGB color)
+void setColor(RGB &color)
 {
   setLed(R_1, color.r);
   setLed(R_2, color.r);

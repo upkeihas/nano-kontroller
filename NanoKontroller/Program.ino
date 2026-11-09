@@ -6,30 +6,11 @@ void setupPrgMgr()
   LOGGER.info("PrgMgr.setupPrgMgr", "Program Manager initialised.");
 }
 
-// Better block that responds to IR remote events.
-void bblock()
-{
-  while (!IR_COMMAND_PENDING && !BRIGHTNESS_EVENT_PENDING)
-  {
-    belay(LED_DELAYMILLIS);
-  }
-}
-
-// Better delay that responds to IR remote events.
-void belay(long period)
-{
-  unsigned long start = millis();
-  while (!IR_COMMAND_PENDING)
-  {
-    if ((millis() - start) >= (unsigned long)period)
-      break;
-  }
-}
 
 /**
   Helper function to capture color button press during program execution,
   before actual IR interrupt handler runs.
-  Returns captured RGB color or provided color.
+  Returns captured RGB color or provided default value.
 */
 RGB _captureColorPress(RGB &oldColor)
 {
@@ -81,7 +62,7 @@ RGB _captureColorPress(RGB &oldColor)
 }
 
 // Print program run stats to debug log.
-void _program_stats(Program program)
+void _program_stats(Program &program)
 {
 #ifdef DEBUG
   // only if the program actually ran
@@ -95,6 +76,26 @@ void _program_stats(Program program)
     LOGGER.debug(String(program.Name), _stats);
   }
 #endif
+}
+
+// Better block that responds to IR remote events.
+void bblock()
+{
+  while (!IR_COMMAND_PENDING && !BRIGHTNESS_EVENT_PENDING)
+  {
+    belay(LED_DELAYMILLIS);
+  }
+}
+
+// Better delay that responds to IR remote events.
+void belay(long period)
+{
+  unsigned long start = millis();
+  while (!IR_COMMAND_PENDING)
+  {
+    if ((millis() - start) >= (unsigned long)period)
+      break;
+  }
 }
 
 // Run provided program function in a loop for provided duration millis.
@@ -133,7 +134,7 @@ void run_program_until_interrupt(Program program)
 // Fade through all the channels one by one in a loop
 void _programBreathe()
 {
-  int fadeAmount = ADJUST_STEP;
+  int fadeAmount = 1;
   for (int pin : ledPins)
   {
     int brightness = LED_OFF;
@@ -160,10 +161,14 @@ void _programBreathe()
 // Set all channels to random value, creating a vomit of color output!
 void _programColorBlaster()
 {
-  setColor({static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
-            static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
-            static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS))});
-  belay(LED_DELAYMILLIS);
+  RGB color;
+  while (!IR_COMMAND_PENDING) {
+    color = {static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
+             static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS)),
+             static_cast<uint8_t>(random(LED_MIN_BRIGHTNESS, LED_BRIGHTNESS))};
+    setColor(color);
+    belay(LED_DELAYMILLIS);
+  }
 }
 
 // Flash color on and off
@@ -171,7 +176,6 @@ void _programFlash()
 {
   // Respect existing brightness setting
   RGB color = {LED_BRIGHTNESS, LED_BRIGHTNESS, LED_BRIGHTNESS};
-
   while (!IR_COMMAND_PENDING)
   {
     setColor(color);
@@ -181,6 +185,43 @@ void _programFlash()
 
     // Toggles effect color if user presses color buttons on remote
     color = _captureColorPress(color);
+  }
+}
+
+// Fade through 2 color channels at a time
+void _programColorFade()
+{
+  RGB color = {LED_OFF, LED_OFF, LED_MAX_INTENSITY};
+  while (!IR_COMMAND_PENDING)
+  {
+    // run once per color channel
+    for (uint8_t i = 0; (i < 3 && !IR_COMMAND_PENDING); i++)
+    {
+      // For each brightness step
+      for (uint8_t j = 0; (j < LED_MAX_INTENSITY && !IR_COMMAND_PENDING); j++)
+      {
+        // Red
+        if (i == 0)
+        {
+          color.r += 1;
+          color.b -= 1;
+        }
+        // Green
+        else if (i == 1)
+        {
+          color.r -= 1;
+          color.g += 1;
+        }
+        // Blue
+        else if (i == 2)
+        {
+          color.b += 1;
+          color.g -= 1;
+        }
+        setBrightnessAdjustedColor(color);
+        belay(LED_DELAYMILLIS);
+      }
+    }
   }
 }
 
@@ -204,39 +245,6 @@ void _programKaTT()
     belay(LED_DELAYMILLIS);
     setLed(ledPins[i],
            LED_OFF);
-  }
-}
-
-// Progress through leds smoothly
-void _programProgress()
-{
-  for (int i = -1; i <= nLedPins; i++)
-  {
-    // previous pin to dim
-    if (i - 1 >= 0 && i - 1 < nLedPins)
-    {
-      setLed(ledPins[i - 1],
-             static_cast<uint8_t>(LED_BRIGHTNESS / 3));
-    }
-    // current pin to max
-    if (i >= 0 && i < nLedPins)
-    {
-      setLed(ledPins[i], LED_BRIGHTNESS);
-    }
-    // next pin to dim
-    if (i + 1 > 0 && i + 1 < nLedPins)
-    {
-      setLed(ledPins[i + 1],
-             static_cast<uint8_t>(LED_BRIGHTNESS / 3));
-    }
-
-    belay(LED_DELAYMILLIS);
-
-    // prev pin turns off
-    if (i - 1 >= 0 && i - 1 < nLedPins)
-    {
-      setLed(ledPins[i - 1], LED_OFF);
-    }
   }
 }
 
@@ -264,42 +272,5 @@ void _programWave()
     setColor(color);
     belay(LED_DELAYMILLIS);
     rad += step;
-  }
-}
-
-// Fade through 2 color channels at a time
-void _programColorFade()
-{
-  RGB color = {LED_OFF, LED_OFF, LED_MAX_INTENSITY};
-  while (!IR_COMMAND_PENDING)
-  {
-    // run once per color channel
-    for (uint8_t i = 0; i < 3; i++)
-    {
-      // For each brightness step
-      for (uint8_t j = 0; j < LED_MAX_INTENSITY; j++)
-      {
-        // Red
-        if (i == 0)
-        {
-          color.r += 1;
-          color.b -= 1;
-        }
-        // Green
-        else if (i == 1)
-        {
-          color.r -= 1;
-          color.g += 1;
-        }
-        // Blue
-        else if (i == 2)
-        {
-          color.b += 1;
-          color.g -= 1;
-        }
-        setBrightnessAdjustedColor(color);
-        belay(LED_DELAYMILLIS);
-      }
-    }
   }
 }

@@ -115,7 +115,7 @@ String handleIRCommand(uint16_t command)
     return "BLUE";
   case 7:
     CURRENT_PROGRAM = 5;
-    return "W";
+    return "WHITE";
   case 8:
     CURRENT_PROGRAM = 126;
     ProgramStaticColor.setColor(VERMILLION);
@@ -218,7 +218,6 @@ void loop()
   // Fade
   else if (CURRENT_PROGRAM == 3)
   {
-    // run_program_until_interrupt(ProgramProgress);
     run_program_until_interrupt(ProgramColorFade);
   }
 

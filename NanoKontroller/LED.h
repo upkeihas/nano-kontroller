@@ -68,7 +68,7 @@ void InterruptBriteDown();
 void forEachLed(uint8_t brightness);
 void ledsOff();
 void setLed(int led, uint8_t brightness);
-void setColor(RGB color);
+void setColor(RGB &color);
 void setBrightnessAdjustedColor(RGB color);
 
 const RGB RED = {255, 0, 0};

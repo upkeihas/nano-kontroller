@@ -89,10 +89,10 @@ private:
 };
 
 void setupPrgMgr();
+RGB _captureColorPress(RGB &oldColor);
+void _program_stats(Program &program);
 void bblock();
 void belay(long period);
-RGB _captureColorPress(RGB &oldColor);
-void _program_stats(Program program);
 void run_program_for_duration(Program program, unsigned long durationMillis);
 void run_program_until_interrupt(Program program);
 void run_program_while(Program program, bool (*condition)());
@@ -110,12 +110,11 @@ void _programWave();
 /*
   Led effect programs wrapped in Program container with typical example values.
 */
-Program ProgramBreathe = Program("Breathing Leds", &_programBreathe, 60);
+Program ProgramBreathe = Program("Breathing Leds", &_programBreathe, 24);
 Program ProgramColorBlaster = Program("Color Blaster", &_programColorBlaster, 500);
 Program ProgramColorFade = Program("Linear Color Fader", &_programColorFade, 24);
 Program ProgramFlash = Program("Flash Leds", &_programFlash, 480);
 Program ProgramKaTT = Program("Program KaTT", &_programKaTT, 120);
-Program ProgramProgress = Program("Progress Through Leds", &_programProgress, 240);
 Program ProgramStaticColor = Program("Static Color Leds", &_programStaticColor, 240, WHITE);
 Program ProgramWave = Program("Wave Generator Color Fader", &_programWave, 12);
 #endif
