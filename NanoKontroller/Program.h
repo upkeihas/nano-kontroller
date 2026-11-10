@@ -89,8 +89,8 @@ private:
 };
 
 void setupPrgMgr();
-RGB _captureColorPress(RGB &oldColor);
-void _program_stats(Program &program);
+RGB captureColorPress(RGB &oldColor);
+void programStats(Program &program);
 void bblock();
 void belay(long period);
 void run_program_for_duration(Program program, unsigned long durationMillis);
@@ -102,8 +102,6 @@ void _programColorBlaster();
 void _programColorFade();
 void _programFlash();
 void _programKaTT();
-void _programProgress();
-void _programRunLed();
 void _programStaticColor(RGB color);
 void _programWave();
 
@@ -116,5 +114,5 @@ Program ProgramColorFade = Program("Linear Color Fader", &_programColorFade, 24)
 Program ProgramFlash = Program("Flash Leds", &_programFlash, 480);
 Program ProgramKaTT = Program("Program KaTT", &_programKaTT, 120);
 Program ProgramStaticColor = Program("Static Color Leds", &_programStaticColor, 240, WHITE);
-Program ProgramWave = Program("Wave Generator Color Fader", &_programWave, 12);
+Program ProgramWave = Program("Wave Generator Color Fader", &_programWave, 24);
 #endif

@@ -15,7 +15,7 @@
 #include "Program.h"          // LED effect programs and manager
 #include "TinyIRReceiver.hpp" // Use interrupt-based TinyReceiver to free up all PWM channels for LED use
 
-const String VERSION = "v0.1.1";          // Current controller SW version
+const String VERSION = "v0.1.2";          // Current controller SW version
 const unsigned long SERIAL_BAUD = 115200; // USB debug serial speed
 volatile bool IR_COMMAND_PENDING = false; // Flag to handle pending IR command event
 uint8_t _IR_COMMAND;                      // Captured command
@@ -32,7 +32,7 @@ void setupIRRemote()
   }
   if (initPCIInterruptForTinyReceiver())
   {
-    LOGGER.info("setupIRRemote", "TinyReceiver started.");
+    LOGGER.info("setupIRRemote", "TinyIRReceiver started.");
     return;
   }
 }
@@ -43,7 +43,6 @@ void handleReceivedTinyIRData()
 {
   _IR_COMMAND = TinyIRReceiverData.Command;
   _IR_FLAGS = TinyIRReceiverData.Flags;
-  // TODO: add interrupt calls for program speed
   switch (_IR_COMMAND)
   {
   case 0:
@@ -51,6 +50,12 @@ void handleReceivedTinyIRData()
     break;
   case 1:
     InterruptBriteDown();
+    break;
+  case 8:
+    InterruptSpeedUp();
+    break;
+  case 9:
+    InterruptSpeedDown();
     break;
   default:
     // Can't be handled by simple interrupt, so escalate!

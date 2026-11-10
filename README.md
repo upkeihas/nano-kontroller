@@ -65,7 +65,7 @@ flowchart RL
 
 ### Debugging
 
-If you uncomment the line `#DEFINE DEBUG` in project file `NanoKontroller.ino`, you will receive lots of useful debug messages in the Arduino USB serial log. Expected speed setting for serial debugger connection is `115200` bps.
+If you uncomment the line `#DEFINE DEBUG` in project file `NanoKontroller.ino`, you will receive lots of useful debug messages in the Arduino USB serial log. Expected speed setting for serial debugger connection is `115200` baud.
 
 True color programs dump the RGB value of set color to logger in CSV format, so you can have nice visualizations of your channel intensities:
 

@@ -12,11 +12,11 @@ void setupPrgMgr()
   before actual IR interrupt handler runs.
   Returns captured RGB color or provided default value.
 */
-RGB _captureColorPress(RGB &oldColor)
+RGB captureColorPress(RGB &oldColor)
 {
   if (IR_COMMAND_PENDING && _IR_COMMAND >= 4 && _IR_COMMAND <= 22)
   {
-    const uint8_t colorCommands[] = {4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 16, 17, 18, 20, 21, 22};
+    const uint8_t colorCommands[] = {4, 5, 6, 7, 10, 12, 13, 14, 16, 17, 18, 20, 21, 22};
     for (uint8_t command : colorCommands)
       if (command == _IR_COMMAND)
       {
@@ -31,10 +31,6 @@ RGB _captureColorPress(RGB &oldColor)
           return BLUE;
         case 7:
           return WHITE;
-        case 8:
-          return VERMILLION;
-        case 9:
-          return MINT;
         case 10:
           return DBLUE;
         case 12:
@@ -62,7 +58,7 @@ RGB _captureColorPress(RGB &oldColor)
 }
 
 // Print program run stats to debug log.
-void _program_stats(Program &program)
+void programStats(Program &program)
 {
 #ifdef DEBUG
   // only if the program actually ran
@@ -104,7 +100,7 @@ void run_program_for_duration(Program program, unsigned long duration)
   LOGGER.info("PrgMgr.run_program_for_duration", program.Name);
   setLedDelayMillis(program.Speed);
   program.runDuration(duration);
-  _program_stats(program);
+  programStats(program);
 }
 
 // Run provided program function in loop while condition function returns true.
@@ -113,7 +109,7 @@ void run_program_while(Program program, bool (*condition)())
   LOGGER.debug("PrgMgr.run_program_while", program.Name);
   setLedDelayMillis(program.Speed);
   program.runWhile(condition);
-  _program_stats(program);
+  programStats(program);
 }
 
 // Run provided program in a loop until IR interrupt.
@@ -171,22 +167,6 @@ void _programColorBlaster()
   }
 }
 
-// Flash color on and off
-void _programFlash()
-{
-  RGB color = WHITE;
-  while (!IR_COMMAND_PENDING)
-  {
-    setBrightnessAdjustedColor(color);
-    belay(LED_DELAYMILLIS);
-    ledsOff();
-    belay(LED_DELAYMILLIS);
-
-    // Toggles effect color if user presses color buttons on remote
-    color = _captureColorPress(color);
-  }
-}
-
 // Fade through 2 color channels at a time
 void _programColorFade()
 {
@@ -221,6 +201,22 @@ void _programColorFade()
         belay(LED_DELAYMILLIS);
       }
     }
+  }
+}
+
+// Flash color on and off
+void _programFlash()
+{
+  RGB color = WHITE;
+  while (!IR_COMMAND_PENDING)
+  {
+    setBrightnessAdjustedColor(color);
+    belay(LED_DELAYMILLIS);
+    ledsOff();
+    belay(LED_DELAYMILLIS);
+
+    // Toggles effect color if user presses color buttons on remote
+    color = captureColorPress(color);
   }
 }
 

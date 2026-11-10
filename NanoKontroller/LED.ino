@@ -28,19 +28,14 @@ void setLedDelayMillis(uint16_t speed)
   Interrupt handlers
 */
 
-// Speed up interrupt handler.
-void InterruptSpeedUp()
+// Brightness down interrupt handler. Do not allow to go all the way to 0.
+void InterruptBriteDown()
 {
-  if (LED_DELAYMILLIS >= ADJUST_STEP)
+  if ((LED_BRIGHTNESS - ADJUST_STEP) >= LED_MIN_BRIGHTNESS)
   {
-    LED_DELAYMILLIS -= ADJUST_STEP;
+    LED_BRIGHTNESS -= ADJUST_STEP;
+    BRIGHTNESS_EVENT_PENDING = true;
   }
-}
-
-// Speed down interrupt handler.
-void InterruptSpeedDown()
-{
-  LED_DELAYMILLIS += ADJUST_STEP;
 }
 
 // Brightness up interrupt handler.
@@ -53,13 +48,38 @@ void InterruptBriteUp()
   }
 }
 
-// Brightness down interrupt handler. Do not allow to go all the way to 0.
-void InterruptBriteDown()
+// Speed down interrupt handler.
+void InterruptSpeedDown()
 {
-  if (LED_BRIGHTNESS > LED_MIN_BRIGHTNESS)
+  if (LED_DELAYMILLIS < 10)
   {
-    LED_BRIGHTNESS -= ADJUST_STEP;
-    BRIGHTNESS_EVENT_PENDING = true;
+    LED_DELAYMILLIS += 1;
+  }
+  else if (LED_DELAYMILLIS < 100)
+  {
+    LED_DELAYMILLIS += ADJUST_STEP;
+  }
+  else {
+    LED_DELAYMILLIS += 10;
+  }
+}
+
+// Speed up interrupt handler.
+void InterruptSpeedUp()
+{
+  // Keep some sensible minimum delay
+  if (LED_DELAYMILLIS > ADJUST_STEP)
+  {
+    if (LED_DELAYMILLIS < 10) {
+      LED_DELAYMILLIS -= 1;
+    }
+    else if (LED_DELAYMILLIS < 100)
+    {
+      LED_DELAYMILLIS -= ADJUST_STEP;
+    }
+    else {
+      LED_DELAYMILLIS -= 10;
+    }
   }
 }
 
