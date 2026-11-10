@@ -22,8 +22,7 @@ const int nLedPins = 6;
 const int ledPins[nLedPins] = {R_1, G_1, B_1, R_2, G_2, B_2};
 
 // Container for RGB color codes.
-struct RGB
-{
+struct RGB {
   uint8_t r;
   uint8_t g;
   uint8_t b;

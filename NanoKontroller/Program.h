@@ -5,7 +5,8 @@
  * See project repository for license information.
  *
  *
- * Program manager for running led effect functions and a few simple example programs.
+ * Program manager for running led effect functions and a few simple example
+ * programs.
  */
 
 #ifndef PROGRAM_H
@@ -25,8 +26,7 @@
  *
  **/
 
-class Program
-{
+class Program {
 public:
   using Callback = void (*)();
   using CallbackWargs = void (*)(RGB);
@@ -39,49 +39,40 @@ public:
   RGB Color;
 
   // Program with default args
-  Program(const String &name, Callback callback, uint16_t speed) : Name(name), Speed(speed), program(callback) {}
+  Program(const String &name, Callback callback, uint16_t speed)
+      : Name(name), Speed(speed), program(callback) {}
 
   // Program with extra RGB args
-  Program(const String &name, CallbackWargs callback, uint16_t speed, RGB color) : Name(name), Speed(speed), program(nullptr), rgbProgram(callback), Color(color) {}
+  Program(const String &name, CallbackWargs callback, uint16_t speed, RGB color)
+      : Name(name), Speed(speed), program(nullptr), rgbProgram(callback),
+        Color(color) {}
 
-  void Run()
-  {
+  void Run() {
     BRIGHTNESS_EVENT_PENDING = false;
     iters++;
-    if (beginMillis == 0)
-    {
+    if (beginMillis == 0) {
       beginMillis = millis();
     }
-    if (program != nullptr)
-    {
+    if (program != nullptr) {
       program();
-    }
-    else
-    {
+    } else {
       rgbProgram(Color);
     }
     durationMillis = (millis() - beginMillis);
   }
 
-  void runDuration(unsigned long duration)
-  {
-    do
-    {
+  void runDuration(unsigned long duration) {
+    do {
       Run();
     } while (durationMillis < duration);
   }
 
-  void runWhile(bool (*condition)())
-  {
-    while (condition())
-    {
+  void runWhile(bool (*condition)()) {
+    while (condition()) {
       Run();
     }
   }
-  void setColor(RGB color)
-  {
-    this->Color = color;
-  }
+  void setColor(RGB color) { this->Color = color; }
 
 private:
   Callback program;
@@ -109,10 +100,13 @@ void _programWave();
   Led effect programs wrapped in Program container with typical example values.
 */
 Program ProgramBreathe = Program("Breathing Leds", &_programBreathe, 24);
-Program ProgramColorBlaster = Program("Color Blaster", &_programColorBlaster, 500);
-Program ProgramColorFade = Program("Linear Color Fader", &_programColorFade, 24);
+Program ProgramColorBlaster =
+    Program("Color Blaster", &_programColorBlaster, 500);
+Program ProgramColorFade =
+    Program("Linear Color Fader", &_programColorFade, 24);
 Program ProgramFlash = Program("Flash Leds", &_programFlash, 480);
 Program ProgramKaTT = Program("Program KaTT", &_programKaTT, 120);
-Program ProgramStaticColor = Program("Static Color Leds", &_programStaticColor, 240, WHITE);
+Program ProgramStaticColor =
+    Program("Static Color Leds", &_programStaticColor, 240, WHITE);
 Program ProgramWave = Program("Wave Generator Color Fader", &_programWave, 24);
 #endif

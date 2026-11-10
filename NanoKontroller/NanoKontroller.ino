@@ -1,5 +1,6 @@
 /**
- * NanoKontroller, IR remote controllable 6 channel LED driver made for Arduino NANO/Uno R3.
+ * NanoKontroller, IR remote controllable 6 channel LED driver made for Arduino
+ * NANO/Uno R3.
  *
  * Made by upkeihas@github
  * See project repository for license information.
@@ -11,40 +12,37 @@
 #define IR_RECEIVE_PIN 2     // IR sensor pin
 #define USE_CALLBACK_FOR_TINY_RECEIVER
 
-#include "DebugLogger.h"      // provides LOGGER
-#include "Program.h"          // LED effect programs and manager
+#include "DebugLogger.h" // provides LOGGER
+#include "Program.h"     // LED effect programs and manager
 #include "TinyIRReceiver.hpp" // Use interrupt-based TinyReceiver to free up all PWM channels for LED use
 
 const String VERSION = "v0.1.2";          // Current controller SW version
 const unsigned long SERIAL_BAUD = 115200; // USB debug serial speed
-volatile bool IR_COMMAND_PENDING = false; // Flag to handle pending IR command event
-uint8_t _IR_COMMAND;                      // Captured command
-uint8_t _IR_FLAGS;                        // Flags to determine command success
-uint8_t CURRENT_PROGRAM = 127;            // Program counter
-const uint8_t NO_PROGRAM = 0;             // Do not run a program
+// Flag to handle pending IR command event
+volatile bool IR_COMMAND_PENDING = false;
+uint8_t _IR_COMMAND;           // Captured command
+uint8_t _IR_FLAGS;             // Flags to determine command success
+uint8_t CURRENT_PROGRAM = 127; // Program counter
+const uint8_t NO_PROGRAM = 0;  // Do not run a program
 
 // Starts listening to IR events
-void setupIRRemote()
-{
-  if (!Serial)
-  {
+void setupIRRemote() {
+  if (!Serial) {
     Serial.begin(SERIAL_BAUD);
   }
-  if (initPCIInterruptForTinyReceiver())
-  {
+  if (initPCIInterruptForTinyReceiver()) {
     LOGGER.info("setupIRRemote", "TinyIRReceiver started.");
     return;
   }
 }
 
-// IR interrupt event handler. If calling a simple interrupt function cannot handle
-// our event then store values to global variables and raise IR_COMMAND_PENDING flag.
-void handleReceivedTinyIRData()
-{
+// IR interrupt event handler. If calling a simple interrupt function cannot
+// handle our event then store values to global variables and raise
+// IR_COMMAND_PENDING flag.
+void handleReceivedTinyIRData() {
   _IR_COMMAND = TinyIRReceiverData.Command;
   _IR_FLAGS = TinyIRReceiverData.Flags;
-  switch (_IR_COMMAND)
-  {
+  switch (_IR_COMMAND) {
   case 0:
     InterruptBriteUp();
     break;
@@ -65,8 +63,7 @@ void handleReceivedTinyIRData()
 }
 
 // Global Setup
-void setup()
-{
+void setup() {
   // Setup serial debug logger
   setupLogger(SERIAL_BAUD);
 
@@ -78,26 +75,22 @@ void setup()
 
   // Print a nice message to start debug log
   LOGGER.info("");
-  LOGGER.info(String("*** Always Amazing Arduino NANO-Kontroller " + VERSION + " ***"));
+  LOGGER.info(
+      String("*** Always Amazing Arduino NANO-Kontroller " + VERSION + " ***"));
   LOGGER.info("");
 }
 
 // Find out what all that ruckus is and do something about it.
 // Returns command name string after handling event.
-String handleIRCommand(uint16_t command)
-{
+String handleIRCommand(uint16_t command) {
   // We got it, reset interrupt flag
   IR_COMMAND_PENDING = false;
-  switch (command)
-  {
+  switch (command) {
   case 2:
     // Press OFF twice to enable intro program
-    if (CURRENT_PROGRAM == NO_PROGRAM)
-    {
+    if (CURRENT_PROGRAM == NO_PROGRAM) {
       CURRENT_PROGRAM = 127;
-    }
-    else
-    {
+    } else {
       CURRENT_PROGRAM = NO_PROGRAM;
       ledsOff();
     }
@@ -188,53 +181,44 @@ String handleIRCommand(uint16_t command)
 }
 
 // Main Loop
-void loop()
-{
-  if (IR_COMMAND_PENDING)
-  {
+void loop() {
+  if (IR_COMMAND_PENDING) {
     String commandName = handleIRCommand(_IR_COMMAND);
     LOGGER.debug("handleIRCommand", String("COMMAND: " + commandName));
   }
 
   // Welcome program
-  if (CURRENT_PROGRAM == 127)
-  {
+  if (CURRENT_PROGRAM == 127) {
     run_program_until_interrupt(ProgramBreathe);
   }
 
   // Static color on
-  if (CURRENT_PROGRAM == 126)
-  {
+  if (CURRENT_PROGRAM == 126) {
     run_program_until_interrupt(ProgramStaticColor);
   }
 
   // Color blaster
-  else if (CURRENT_PROGRAM == 5)
-  {
+  else if (CURRENT_PROGRAM == 5) {
     run_program_until_interrupt(ProgramColorBlaster);
   }
 
   // Smooth
-  else if (CURRENT_PROGRAM == 4)
-  {
+  else if (CURRENT_PROGRAM == 4) {
     run_program_until_interrupt(ProgramWave);
   }
 
   // Fade
-  else if (CURRENT_PROGRAM == 3)
-  {
+  else if (CURRENT_PROGRAM == 3) {
     run_program_until_interrupt(ProgramColorFade);
   }
 
   // Strobe
-  else if (CURRENT_PROGRAM == 2)
-  {
+  else if (CURRENT_PROGRAM == 2) {
     run_program_until_interrupt(ProgramKaTT);
   }
 
   // Flash
-  else if (CURRENT_PROGRAM == 1)
-  {
+  else if (CURRENT_PROGRAM == 1) {
     run_program_until_interrupt(ProgramFlash);
   }
 

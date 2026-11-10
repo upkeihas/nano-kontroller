@@ -27,18 +27,14 @@ bool _LOGGER_ISSETUP = false;
  *
  * @param name String, logger name.
  */
-class DebugLogger
-{
+class DebugLogger {
 private:
   String _millisTs();
   void _printLogLn(String module, String level, String msg);
 
 public:
   String Name;
-  DebugLogger(String name = LOGGER_DEFAULTNAME)
-  {
-    Name = name;
-  };
+  DebugLogger(String name = LOGGER_DEFAULTNAME) { Name = name; };
   void debug(String module, String msg);
   void debug(String msg);
   void info(String module, String msg);
