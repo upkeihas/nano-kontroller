@@ -213,22 +213,40 @@ void _programStaticColor(RGB color) {
   bblock();
 }
 
-// Wave generator program to cycle through colors smoothly
+/**
+  Wave generator program to cycle through colors smoothly.
+  Uses a sine waveform values array stored in PROGMEM as intensity
+  reference.
+*/
 void _programWave() {
-  float rad = 0.0;              // starting point of color wheel
-  float step = TWO_PI / 360.0f; // one degree steps
-  float amplitude;
   RGB color;
-  while (!IR_COMMAND_PENDING && (rad < TWO_PI)) {
-    amplitude =
-        LED_BRIGHTNESS / 2.0f; // divide by 2 because sin() returns -1 .. 1
-    // TODO: less calls to sin(), consider using static time series of sine wave
-    // intensity values instead
-    color.r = static_cast<uint8_t>((sin(rad) + 1) * amplitude);
-    color.g = static_cast<uint8_t>((sin(rad + 2.09f) + 1) * amplitude);
-    color.b = static_cast<uint8_t>((sin(rad + 4.19f) + 1) * amplitude);
+  int offset = 120; // Degrees from R channel
+  for (int i = 0; i < 360; i++) {
+    color.r = adjustColorBrightness(pgm_read_byte(&sineIntensity[i]));
+
+    // Set green 120 degrees ahead in curve
+    if ((i + offset) <= 359) {
+      color.g =
+          adjustColorBrightness(pgm_read_byte(&sineIntensity[i + offset]));
+    } else {
+      color.g = adjustColorBrightness(
+          pgm_read_byte(&sineIntensity[(i + offset) - 359]));
+    }
+
+    // Set blue 120 degrees behind in curve
+    if (i - offset >= 0) {
+      color.b =
+          adjustColorBrightness(pgm_read_byte(&sineIntensity[i - offset]));
+
+    } else {
+      color.b = adjustColorBrightness(
+          pgm_read_byte(&sineIntensity[(i - offset) + 359]));
+    }
+
     setColor(color);
     belay(LED_DELAYMILLIS);
-    rad += step;
+    if (IR_COMMAND_PENDING) {
+      break;
+    }
   }
 }
