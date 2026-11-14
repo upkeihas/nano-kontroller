@@ -21,9 +21,8 @@ const int B_2 = 11;
 const int nLedPins = 6;
 const int ledPins[nLedPins] = {R_1, G_1, B_1, R_2, G_2, B_2};
 
-// Container for RGB color codes
-struct RGB
-{
+// Container for RGB color codes.
+struct RGB {
   uint8_t r;
   uint8_t g;
   uint8_t b;
@@ -31,22 +30,22 @@ struct RGB
 
 // Increment step to change brightness and effect speed.
 const uint8_t ADJUST_STEP = 5;
+
 // Maximum brightness for leds.
 const uint8_t LED_MAX_INTENSITY = 255;
 const uint8_t LED_OFF = 0;
 
-// Signal our program that brightness setting just changed
+// Signal our program that brightness setting just changed.
 volatile bool BRIGHTNESS_EVENT_PENDING = false;
 
 /**
   Current effect intensity.
   Value gets updated externally via callback function.
-  Optimally divisible by ADJUST_STEP.
 */
 volatile uint8_t LED_BRIGHTNESS = 130;
 
-// Current effect minimum intensity. Optimally divisible by ADJUST_STEP
-const uint8_t LED_MIN_BRIGHTNESS = 5;
+// Current effect minimum intensity.
+const uint8_t LED_MIN_BRIGHTNESS = ADJUST_STEP;
 
 /**
   Default effect speed for currently running program.
